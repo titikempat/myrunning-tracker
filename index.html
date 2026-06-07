@@ -94,6 +94,8 @@ button:hover{opacity:.9}
   align-items:center;
   background:#0008;
   font-size:40px;
+  backdrop-filter: blur(4px);
+  z-index:9999; /* 🔥 FIX UTAMA */
 }
 
 .loader span{
@@ -125,6 +127,25 @@ button:hover{opacity:.9}
 
 @media(max-width:480px){
   .grid{grid-template-columns:1fr}
+}
+
+.program-card{
+  background:#020617;
+  border:1px solid #1e293b;
+  border-radius:12px;
+  padding:12px;
+  margin-top:10px;
+}
+
+.program-title{
+  font-weight:bold;
+  font-size:16px;
+  margin-bottom:6px;
+}
+
+.program-meta{
+  font-size:13px;
+  opacity:.8;
 }
 </style>
 </head>
@@ -322,76 +343,200 @@ async function save(){
 
 // DASHBOARD
 async function loadDash(){
-  load(true);
 
-  const r=await fetch(API,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"dashboard",
-      user_id:uid
-    })
-  });
+  try{
 
-  const d=await r.json();
+    load(true);
 
-  saran.innerText=d.saran;
+    // ================= DASHBOARD =================
 
-  if(d.progress){
-    const p=d.progress;
+    const r = await fetch(API,{
+      method:"POST",
+      body:JSON.stringify({
+        action:"dashboard",
+        user_id:uid
+      })
+    });
 
-    avgHR.innerText=p.avg_hr.toFixed(0);
-    avgPace.innerText=p.avg_pace.toFixed(2);
-    improve.innerText=p.improvement.toFixed(2);
+    const d = await r.json();
 
-    status.innerText=p.status;
-    status.className="badge "+p.status;
+    console.log("Dashboard:", d);
+
+    // ================= AI COACH =================
+
+    if(d.saran){
+
+      const lines = d.saran
+        .split("\n")
+        .filter(x => x.trim() !== "");
+
+      const title = lines[0] || "🏃 Program Hari Ini";
+      const content = lines.slice(1).join("<br>");
+
+      saran.innerHTML = `
+        <div class="program-card">
+
+          <div class="program-title">
+            ${title}
+          </div>
+
+          <div class="program-meta">
+            ${content}
+          </div>
+
+        </div>
+      `;
+
+    }else{
+
+      saran.innerHTML = `
+        <div class="program-card">
+
+          <div class="program-title">
+            Tidak Ada Program
+          </div>
+
+          <div class="program-meta">
+            Hari ini tidak ada jadwal latihan.
+          </div>
+
+        </div>
+      `;
+
+    }
+
+    // ================= PROGRESS =================
+
+    if(d.progress){
+
+      const p = d.progress;
+
+      avgHR.innerText =
+        Number(p.avg_hr || 0).toFixed(0);
+
+      avgPace.innerText =
+        Number(p.avg_pace || 0).toFixed(2);
+
+      improve.innerText =
+        Number(p.improvement || 0).toFixed(2);
+
+      status.innerText =
+        p.status || "-";
+
+      status.className =
+        "badge " + (p.status || "normal");
+
+    }else{
+
+      avgHR.innerText = "-";
+      avgPace.innerText = "-";
+      improve.innerText = "-";
+
+      status.innerText = "-";
+      status.className = "badge normal";
+
+    }
+
+    // ================= HISTORY =================
+
+    const h = await fetch(API,{
+      method:"POST",
+      body:JSON.stringify({
+        action:"history",
+        user_id:uid
+      })
+    });
+
+    const data = await h.json();
+
+    let historyHtml = "";
+    let weekly = {};
+
+    (data.data || []).forEach(item=>{
+
+      historyHtml += `
+        <div class="program-card" style="margin-bottom:8px">
+
+          <div class="program-title">
+            ${item.jarak} KM
+          </div>
+
+          <div class="program-meta">
+            📅 ${item.tanggal}<br>
+            ❤️ HR ${item.hr}<br>
+            ⚡ Pace ${item.pace}
+          </div>
+
+        </div>
+      `;
+
+      const weekDate = new Date(item.tanggal);
+
+      if(!isNaN(weekDate)){
+
+        const key =
+          weekDate.getFullYear() +
+          "-" +
+          weekDate.getMonth() +
+          "-" +
+          Math.ceil(weekDate.getDate()/7);
+
+        weekly[key] =
+          (weekly[key] || 0) +
+          Number(item.jarak || 0);
+
+      }
+
+    });
+
+    history.innerHTML =
+      historyHtml ||
+      "<div class='program-card'>Belum ada data lari</div>";
+
+    // ================= CHART =================
+
+    const labels = Object.keys(weekly);
+    const values = Object.values(weekly);
+
+    if(chart){
+      chart.destroy();
+    }
+
+    chart = new Chart(
+      document.getElementById("chart"),
+      {
+        type:"line",
+        data:{
+          labels:labels,
+          datasets:[{
+            label:"KM / Minggu",
+            data:values,
+            tension:0.4,
+            fill:false
+          }]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false
+        }
+      }
+    );
+
+  }catch(err){
+
+    console.error(err);
+
+    alert(
+      "Error Dashboard : " +
+      err.message
+    );
+
+  }finally{
+
+    load(false);
+
   }
 
-  const h=await fetch(API,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"history",
-      user_id:uid
-    })
-  });
-
-  const data=await h.json();
-
-  let html="";
-  let weekly={};
-
-  data.data.forEach(r=>{
-    html+=`
-    <div>
-      ${r.tanggal} • ${r.jarak} km • HR ${r.hr}
-    </div>`;
-
-    const week = new Date(r.tanggal);
-    const key = week.getFullYear()+"-"+week.getMonth()+"-"+Math.ceil(week.getDate()/7);
-
-    weekly[key]=(weekly[key]||0)+Number(r.jarak);
-  });
-
-  history.innerHTML=html;
-
-  const labels=Object.keys(weekly);
-  const values=Object.values(weekly);
-
-  if(chart) chart.destroy();
-
-  chart=new Chart(document.getElementById("chart"),{
-    type:"line",
-    data:{
-      labels:labels,
-      datasets:[{
-        label:"KM",
-        data:values,
-        tension:0.4
-      }]
-    }
-  });
-
-  load(false);
 }
 </script>
 
