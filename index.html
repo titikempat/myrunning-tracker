@@ -4,142 +4,169 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RunTracker</title>
+<title>RunTracker Pro</title>
 
 <style>
-body {
+:root{
+  --bg:#020617;
+  --card:rgba(255,255,255,0.05);
+  --soft:#1e293b;
+  --primary:#22c55e;
+  --accent:#38bdf8;
+}
+
+*{box-sizing:border-box}
+
+body{
   margin:0;
   font-family:'Segoe UI',sans-serif;
-  background: linear-gradient(135deg,#020617,#0f172a);
+  background: radial-gradient(circle at top,#0f172a,#020617);
   color:white;
 }
 
-.container {
-  max-width:420px;
+/* CONTAINER */
+.container{
+  max-width:520px;
   margin:auto;
-  padding:20px;
+  padding:16px;
 }
 
-.card {
-  background: rgba(255,255,255,0.05);
-  padding:20px;
+/* CARD PREMIUM */
+.card{
+  background:var(--card);
+  padding:18px;
   border-radius:20px;
-  backdrop-filter: blur(10px);
-  margin-top:20px;
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.05);
+  margin-top:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
 
-h2 {
-  margin-bottom:10px;
-}
-
-input {
+/* INPUT */
+input{
   width:100%;
-  padding:12px;
+  padding:13px;
   margin-top:10px;
   border-radius:12px;
   border:none;
-  background:#1e293b;
+  background:var(--soft);
   color:white;
 }
 
-button {
+/* BUTTON */
+button{
   width:100%;
   padding:14px;
-  margin-top:15px;
+  margin-top:14px;
   border:none;
   border-radius:14px;
   font-weight:bold;
-  font-size:16px;
   cursor:pointer;
+  transition:.2s;
 }
 
-.btn-primary {
-  background:#22c55e;
+button:hover{opacity:.9}
+
+.btn-primary{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
 }
 
-.btn-info {
-  background:#38bdf8;
+.btn-info{
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
 }
 
-.link {
-  text-align:center;
-  margin-top:10px;
-  font-size:14px;
-}
-
-.link span {
-  color:#38bdf8;
-  cursor:pointer;
-}
-
-/* DASHBOARD */
-#dashboard { display:none; }
-
-.header {
+/* HEADER */
+.header{
   font-size:22px;
   font-weight:bold;
 }
 
-.section {
-  margin-top:20px;
-}
-
 /* LOADER */
-.loader {
+.loader{
+  position:fixed;
+  inset:0;
+  background:#020617e6;
   display:none;
-  text-align:center;
-  font-size:40px;
-  margin-top:40px;
-  animation: run 0.6s infinite alternate;
+  justify-content:center;
+  align-items:center;
+  font-size:50px;
+  z-index:999;
 }
 
-@keyframes run {
-  from { transform: translateX(-10px); }
-  to { transform: translateX(10px); }
+.loader span{
+  animation:run .6s infinite alternate;
 }
+
+@keyframes run{
+  from{transform:translateX(-20px)}
+  to{transform:translateX(20px)}
+}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#111827;
+  padding:12px 18px;
+  border-radius:12px;
+  display:none;
+}
+
+/* PROGRESS BAR */
+.bar{
+  height:10px;
+  background:#1e293b;
+  border-radius:10px;
+  overflow:hidden;
+}
+.bar span{
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,#22c55e,#4ade80);
+}
+
+/* HISTORY ITEM */
+.item{
+  padding:10px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+/* CHART */
+.chart-bar{
+  display:flex;
+  align-items:flex-end;
+  gap:6px;
+  height:120px;
+  margin-top:10px;
+}
+.chart-bar div{
+  flex:1;
+  background:linear-gradient(180deg,#38bdf8,#0ea5e9);
+  border-radius:6px 6px 0 0;
+}
+
+#dashboard{display:none}
 </style>
 
 </head>
 
 <body>
 
+<div id="loader" class="loader"><span>🏃</span></div>
+<div id="toast" class="toast"></div>
+
 <div class="container">
 
 <!-- LOGIN -->
 
 <div id="loginCard" class="card">
-<h2>🏃 RunTracker</h2>
-
+<h2>🏃 RunTracker Pro</h2>
 <input id="user" placeholder="User / Email">
 <input id="password" type="password" placeholder="Password">
-
 <button class="btn-primary" onclick="login()">Login</button>
-
-<div class="link">
-Belum punya akun? <span onclick="showRegister()">Daftar</span>
 </div>
-</div>
-
-<!-- REGISTER -->
-
-<div id="registerCard" class="card" style="display:none;">
-<h2>Daftar</h2>
-
-<input id="r_nama" placeholder="Nama">
-<input id="r_email" placeholder="Email">
-<input id="r_password" type="password" placeholder="Password">
-<input id="r_usia" placeholder="Usia">
-<input id="r_tinggi" placeholder="Tinggi">
-<input id="r_berat" placeholder="Berat">
-
-<button class="btn-primary" onclick="register()">Daftar</button>
-
-<div class="link">
-Sudah punya akun? <span onclick="showLogin()">Login</span>
-</div>
-</div>
-
-<div id="loader" class="loader">🏃‍♂️</div>
 
 <!-- DASHBOARD -->
 
@@ -156,19 +183,28 @@ Sudah punya akun? <span onclick="showLogin()">Login</span>
 <input id="pace" placeholder="Pace">
 <input id="avg_hr" placeholder="Avg HR">
 <input id="max_hr" placeholder="Max HR">
-
 <button class="btn-primary" onclick="saveRun()">Simpan</button>
-
 </div>
 
-<div class="section card">
-<h3>🧠 Saran Latihan</h3>
-<p id="saran">Belum ada data</p>
+<div class="card">
+<h3>🧠 AI Saran</h3>
+<p id="saran">-</p>
 </div>
 
-<div class="section card">
-<h3>📊 Progress</h3>
-<p id="progress">Belum ada data</p>
+<div class="card">
+<h3>🎮 Level Progress</h3>
+<div id="progress"></div>
+<div class="bar"><span id="xpbar" style="width:0%"></span></div>
+</div>
+
+<div class="card">
+<h3>📊 Grafik Mingguan</h3>
+<div id="chart" class="chart-bar"></div>
+</div>
+
+<div class="card">
+<h3>📜 Riwayat Lari</h3>
+<div id="history"></div>
 </div>
 
 </div>
@@ -176,79 +212,59 @@ Sudah punya akun? <span onclick="showLogin()">Login</span>
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyFFR0ETNNdE6UaA97a5D0caePx5Nis7Mn6emDWud2s9zHBKJQaWqs7LqA623Au6D0TgA/exec";
+const API="https://script.google.com/macros/s/AKfycbyFFR0ETNNdE6UaA97a5D0caePx5Nis7Mn6emDWud2s9zHBKJQaWqs7LqA623Au6D0TgA/exec";
 
-let USER_ID = null;
+let USER_ID=null;
 
-function showLoader(show){
-  loader.style.display = show ? "block":"none";
+/* UTIL */
+function showLoader(v){loader.style.display=v?"flex":"none";}
+function toastMsg(msg){
+  toast.innerText=msg;
+  toast.style.display="block";
+  setTimeout(()=>toast.style.display="none",2000);
 }
 
-function showRegister(){
-  loginCard.style.display="none";
-  registerCard.style.display="block";
-}
-
-function showLogin(){
-  registerCard.style.display="none";
-  loginCard.style.display="block";
-}
-
+/* LOGIN */
 async function login(){
   showLoader(true);
 
-  const res = await fetch(API+"?action=login",{
-    method:"POST",
-    body:JSON.stringify({
-      user:user.value,
-      password:password.value
-    })
-  });
+  try{
+    const res=await fetch(API+"?action=login",{
+      method:"POST",
+      body:JSON.stringify({
+        user:user.value,
+        password:password.value
+      })
+    });
 
-  const data = await res.json();
-  showLoader(false);
+    const data=await res.json();
 
-  if(data.status==="success"){
-    USER_ID = data.user_id;
-    nama.innerText = data.nama;
+    if(data.status==="success"){
+      USER_ID=data.user_id;
+      nama.innerText=data.nama;
 
-    loginCard.style.display="none";
-    dashboard.style.display="block";
+      loginCard.style.display="none";
+      dashboard.style.display="block";
 
-    loadProgress();
-  } else {
-    alert(data.message);
+      loadDashboard();
+    }else{
+      toastMsg(data.message);
+    }
+
+  }catch(e){
+    toastMsg("Server error");
   }
-}
 
-async function register(){
-  showLoader(true);
-
-  const res = await fetch(API+"?action=register",{
-    method:"POST",
-    body:JSON.stringify({
-      nama:r_nama.value,
-      email:r_email.value,
-      password:r_password.value,
-      usia:r_usia.value,
-      tinggi:r_tinggi.value,
-      berat:r_berat.value,
-      tujuan:"endurance"
-    })
-  });
-
-  await res.json();
   showLoader(false);
-
-  alert("Akun berhasil dibuat!");
-  showLogin();
 }
 
+/* FORM */
 function toggleForm(){
   formRun.style.display =
     formRun.style.display==="none"?"block":"none";
 }
 
+/* SAVE RUN */
 async function saveRun(){
   showLoader(true);
 
@@ -261,22 +277,92 @@ async function saveRun(){
       durasi:durasi.value,
       pace:pace.value,
       avg_hr:avg_hr.value,
-      max_hr:max_hr.value,
-      zona:"",
-      catatan:""
+      max_hr:max_hr.value
     })
   });
 
   showLoader(false);
-  alert("Run tersimpan!");
+  formRun.style.display="none";
+  document.querySelectorAll("#formRun input").forEach(i=>i.value="");
 
-  loadProgress();
+  toastMsg("Run tersimpan 🚀");
+  loadDashboard();
 }
 
-function loadProgress(){
-  // sementara dummy
-  saran.innerText = "Jaga di Zona 2 untuk endurance.";
-  progress.innerText = "Data progress akan tampil di update berikutnya.";
+/* LOAD DASHBOARD */
+async function loadDashboard(){
+  showLoader(true);
+
+  const dash=await fetch(API+"?action=getDashboard",{
+    method:"POST",
+    body:JSON.stringify({user_id:USER_ID})
+  });
+
+  const d=await dash.json();
+
+  saran.innerText=d.saran;
+
+  progress.innerHTML=`
+    Avg HR: <b>${Math.round(d.avgHR)}</b><br>
+    Avg Pace: <b>${d.avgPace}</b><br>
+    Status: <b>${d.statusLatihan}</b>
+  `;
+
+  /* LEVEL SYSTEM */
+  let level=Math.floor(d.avgPace)+1;
+  let xp=(150-d.avgHR);
+  xpbar.style.width=Math.max(5,xp)+"%";
+
+  /* HISTORY */
+  const res=await fetch(API+"?action=getHistory",{
+    method:"POST",
+    body:JSON.stringify({user_id:USER_ID})
+  });
+
+  const data=await res.json();
+
+  if(data.status==="success"){
+    renderHistory(data.data);
+    renderChart(data.data);
+  }
+
+  showLoader(false);
+}
+
+/* HISTORY */
+function renderHistory(runs){
+  let html="";
+  runs.reverse().slice(0,7).forEach(r=>{
+    html+=`
+    <div class="item">
+      ${r.tanggal}<br>
+      ${r.jarak} km • HR ${r.avg_hr}
+    </div>`;
+  });
+  history.innerHTML=html;
+}
+
+/* CHART */
+function renderChart(runs){
+  let week={};
+
+  runs.forEach(r=>{
+    let d=new Date(r.tanggal);
+    let w=getWeek(d);
+    week[w]=(week[w]||0)+Number(r.jarak);
+  });
+
+  chart.innerHTML="";
+
+  Object.values(week).slice(-6).forEach(km=>{
+    let h=Math.min(100,km*10);
+    chart.innerHTML+=`<div style="height:${h}%"></div>`;
+  });
+}
+
+function getWeek(d){
+  const first=new Date(d.getFullYear(),0,1);
+  return Math.ceil((((d-first)/86400000)+first.getDay()+1)/7);
 }
 </script>
 
