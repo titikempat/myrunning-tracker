@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RunTracker</title>
+
+<style>
+body {
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background: linear-gradient(135deg,#020617,#0f172a);
+  color:white;
+}
+
+.container {
+  max-width:420px;
+  margin:auto;
+  padding:20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  padding:20px;
+  border-radius:20px;
+  backdrop-filter: blur(10px);
+  margin-top:20px;
+}
+
+h2 {
+  margin-bottom:10px;
+}
+
+input {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  border:none;
+  background:#1e293b;
+  color:white;
+}
+
+button {
+  width:100%;
+  padding:14px;
+  margin-top:15px;
+  border:none;
+  border-radius:14px;
+  font-weight:bold;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.btn-primary {
+  background:#22c55e;
+}
+
+.btn-info {
+  background:#38bdf8;
+}
+
+.link {
+  text-align:center;
+  margin-top:10px;
+  font-size:14px;
+}
+
+.link span {
+  color:#38bdf8;
+  cursor:pointer;
+}
+
+/* DASHBOARD */
+#dashboard { display:none; }
+
+.header {
+  font-size:22px;
+  font-weight:bold;
+}
+
+.section {
+  margin-top:20px;
+}
+
+/* LOADER */
+.loader {
+  display:none;
+  text-align:center;
+  font-size:40px;
+  margin-top:40px;
+  animation: run 0.6s infinite alternate;
+}
+
+@keyframes run {
+  from { transform: translateX(-10px); }
+  to { transform: translateX(10px); }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- LOGIN -->
+
+<div id="loginCard" class="card">
+<h2>🏃 RunTracker</h2>
+
+<input id="user" placeholder="User / Email">
+<input id="password" type="password" placeholder="Password">
+
+<button class="btn-primary" onclick="login()">Login</button>
+
+<div class="link">
+Belum punya akun? <span onclick="showRegister()">Daftar</span>
+</div>
+</div>
+
+<!-- REGISTER -->
+
+<div id="registerCard" class="card" style="display:none;">
+<h2>Daftar</h2>
+
+<input id="r_nama" placeholder="Nama">
+<input id="r_email" placeholder="Email">
+<input id="r_password" type="password" placeholder="Password">
+<input id="r_usia" placeholder="Usia">
+<input id="r_tinggi" placeholder="Tinggi">
+<input id="r_berat" placeholder="Berat">
+
+<button class="btn-primary" onclick="register()">Daftar</button>
+
+<div class="link">
+Sudah punya akun? <span onclick="showLogin()">Login</span>
+</div>
+</div>
+
+<div id="loader" class="loader">🏃‍♂️</div>
+
+<!-- DASHBOARD -->
+
+<div id="dashboard">
+
+<div class="header">Halo, <span id="nama"></span> 👋</div>
+
+<button class="btn-info" onclick="toggleForm()">🏃 SetorRun</button>
+
+<div id="formRun" class="card" style="display:none;">
+<input id="tanggal" type="date">
+<input id="jarak" placeholder="Jarak (km)">
+<input id="durasi" placeholder="Durasi (menit)">
+<input id="pace" placeholder="Pace">
+<input id="avg_hr" placeholder="Avg HR">
+<input id="max_hr" placeholder="Max HR">
+
+<button class="btn-primary" onclick="saveRun()">Simpan</button>
+
+</div>
+
+<div class="section card">
+<h3>🧠 Saran Latihan</h3>
+<p id="saran">Belum ada data</p>
+</div>
+
+<div class="section card">
+<h3>📊 Progress</h3>
+<p id="progress">Belum ada data</p>
+</div>
+
+</div>
+
+</div>
+
+<script>
+const API = "PASTE_URL_WEB_APP_KAMU_DISINI";
+
+let USER_ID = null;
+
+function showLoader(show){
+  loader.style.display = show ? "block":"none";
+}
+
+function showRegister(){
+  loginCard.style.display="none";
+  registerCard.style.display="block";
+}
+
+function showLogin(){
+  registerCard.style.display="none";
+  loginCard.style.display="block";
+}
+
+async function login(){
+  showLoader(true);
+
+  const res = await fetch(API+"?action=login",{
+    method:"POST",
+    body:JSON.stringify({
+      user:user.value,
+      password:password.value
+    })
+  });
+
+  const data = await res.json();
+  showLoader(false);
+
+  if(data.status==="success"){
+    USER_ID = data.user_id;
+    nama.innerText = data.nama;
+
+    loginCard.style.display="none";
+    dashboard.style.display="block";
+
+    loadProgress();
+  } else {
+    alert(data.message);
+  }
+}
+
+async function register(){
+  showLoader(true);
+
+  const res = await fetch(API+"?action=register",{
+    method:"POST",
+    body:JSON.stringify({
+      nama:r_nama.value,
+      email:r_email.value,
+      password:r_password.value,
+      usia:r_usia.value,
+      tinggi:r_tinggi.value,
+      berat:r_berat.value,
+      tujuan:"endurance"
+    })
+  });
+
+  await res.json();
+  showLoader(false);
+
+  alert("Akun berhasil dibuat!");
+  showLogin();
+}
+
+function toggleForm(){
+  formRun.style.display =
+    formRun.style.display==="none"?"block":"none";
+}
+
+async function saveRun(){
+  showLoader(true);
+
+  await fetch(API+"?action=workout",{
+    method:"POST",
+    body:JSON.stringify({
+      user_id:USER_ID,
+      tanggal:tanggal.value,
+      jarak:jarak.value,
+      durasi:durasi.value,
+      pace:pace.value,
+      avg_hr:avg_hr.value,
+      max_hr:max_hr.value,
+      zona:"",
+      catatan:""
+    })
+  });
+
+  showLoader(false);
+  alert("Run tersimpan!");
+
+  loadProgress();
+}
+
+function loadProgress(){
+  // sementara dummy
+  saran.innerText = "Jaga di Zona 2 untuk endurance.";
+  progress.innerText = "Data progress akan tampil di update berikutnya.";
+}
+</script>
+
+</body>
+</html>
