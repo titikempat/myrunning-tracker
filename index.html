@@ -1,368 +1,325 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RunTracker Pro</title>
+<title>RunTracker AI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root{
   --bg:#020617;
-  --card:rgba(255,255,255,0.05);
-  --soft:#1e293b;
-  --primary:#22c55e;
-  --accent:#38bdf8;
+  --card:#0f172a;
+  --accent:#22c55e;
+  --text:#e2e8f0;
 }
 
-*{box-sizing:border-box}
+*{box-sizing:border-box;}
 
 body{
   margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background: radial-gradient(circle at top,#0f172a,#020617);
-  color:white;
+  font-family:system-ui;
+  background:linear-gradient(180deg,#020617,#020617,#020617);
+  color:var(--text);
 }
 
-/* CONTAINER */
 .container{
   max-width:520px;
   margin:auto;
   padding:16px;
 }
 
-/* CARD PREMIUM */
+/* CARD */
 .card{
-  background:var(--card);
-  padding:18px;
-  border-radius:20px;
-  backdrop-filter:blur(16px);
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(10px);
+  border-radius:16px;
+  padding:16px;
+  margin-top:14px;
   border:1px solid rgba(255,255,255,0.05);
-  margin-top:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
 
 /* INPUT */
-input{
+input,button{
   width:100%;
-  padding:13px;
+  padding:12px;
   margin-top:10px;
-  border-radius:12px;
+  border-radius:10px;
   border:none;
-  background:var(--soft);
-  color:white;
+  font-size:14px;
 }
 
-/* BUTTON */
+input{
+  background:#020617;
+  color:white;
+  border:1px solid #1e293b;
+}
+
 button{
-  width:100%;
-  padding:14px;
-  margin-top:14px;
-  border:none;
-  border-radius:14px;
+  background:var(--accent);
+  color:white;
   font-weight:bold;
   cursor:pointer;
-  transition:.2s;
 }
 
 button:hover{opacity:.9}
 
-.btn-primary{
-  background:linear-gradient(135deg,#22c55e,#16a34a);
-}
-
-.btn-info{
-  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
-}
-
 /* HEADER */
 .header{
-  font-size:22px;
-  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+/* BADGE */
+.badge{
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  display:inline-block;
+}
+
+.too_high{background:#dc2626}
+.improving{background:#16a34a}
+.normal{background:#64748b}
 
 /* LOADER */
 .loader{
   position:fixed;
   inset:0;
-  background:#020617e6;
   display:none;
   justify-content:center;
   align-items:center;
-  font-size:50px;
-  z-index:999;
+  background:#0008;
+  font-size:40px;
 }
 
 .loader span{
-  animation:run .6s infinite alternate;
+  animation:run .5s infinite alternate;
 }
 
 @keyframes run{
-  from{transform:translateX(-20px)}
-  to{transform:translateX(20px)}
+  from{transform:translateX(-10px)}
+  to{transform:translateX(10px)}
 }
 
-/* TOAST */
-.toast{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#111827;
-  padding:12px 18px;
-  border-radius:12px;
-  display:none;
+/* RESPONSIVE */
+@media(max-width:480px){
+  .grid{grid-template-columns:1fr}
 }
-
-/* PROGRESS BAR */
-.bar{
-  height:10px;
-  background:#1e293b;
-  border-radius:10px;
-  overflow:hidden;
-}
-.bar span{
-  display:block;
-  height:100%;
-  background:linear-gradient(90deg,#22c55e,#4ade80);
-}
-
-/* HISTORY ITEM */
-.item{
-  padding:10px;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-}
-
-/* CHART */
-.chart-bar{
-  display:flex;
-  align-items:flex-end;
-  gap:6px;
-  height:120px;
-  margin-top:10px;
-}
-.chart-bar div{
-  flex:1;
-  background:linear-gradient(180deg,#38bdf8,#0ea5e9);
-  border-radius:6px 6px 0 0;
-}
-
-#dashboard{display:none}
 </style>
-
 </head>
 
 <body>
 
-<div id="loader" class="loader"><span>🏃</span></div>
-<div id="toast" class="toast"></div>
+<div class="loader" id="loader"><span>🏃</span></div>
 
 <div class="container">
 
 <!-- LOGIN -->
-
 <div id="loginCard" class="card">
-<h2>🏃 RunTracker Pro</h2>
-<input id="user" placeholder="User / Email">
-<input id="password" type="password" placeholder="Password">
-<button class="btn-primary" onclick="login()">Login</button>
+<h2>Login</h2>
+<input id="user" placeholder="Nama / Email">
+<input id="pass" type="password" placeholder="Password">
+<button onclick="login()">Masuk</button>
 </div>
 
 <!-- DASHBOARD -->
+<div id="dashboard" style="display:none">
 
-<div id="dashboard">
+<div class="header">
+<h3>Halo, <span id="nama"></span></h3>
+<button onclick="toggleForm()">+ Run</button>
+</div>
 
-<div class="header">Halo, <span id="nama"></span> 👋</div>
-
-<button class="btn-info" onclick="toggleForm()">🏃 SetorRun</button>
-
-<div id="formRun" class="card" style="display:none;">
-<input id="tanggal" type="date">
+<!-- FORM -->
+<div id="form" class="card" style="display:none">
+<input id="tgl" type="date">
 <input id="jarak" placeholder="Jarak (km)">
 <input id="durasi" placeholder="Durasi (menit)">
 <input id="pace" placeholder="Pace">
-<input id="avg_hr" placeholder="Avg HR">
-<input id="max_hr" placeholder="Max HR">
-<button class="btn-primary" onclick="saveRun()">Simpan</button>
+<input id="hr" placeholder="HR">
+<button onclick="save()">Simpan</button>
 </div>
 
+<!-- AI COACH -->
 <div class="card">
-<h3>🧠 AI Saran</h3>
-<p id="saran">-</p>
+<h3>🤖 AI Coach</h3>
+<p id="saran"></p>
 </div>
 
+<!-- PROGRESS -->
 <div class="card">
-<h3>🎮 Level Progress</h3>
-<div id="progress"></div>
-<div class="bar"><span id="xpbar" style="width:0%"></span></div>
+<h3>📊 Progress</h3>
+<div class="grid">
+<div>HR<br><b id="avgHR">-</b></div>
+<div>Pace<br><b id="avgPace">-</b></div>
+<div>Improve<br><b id="improve">-</b></div>
+<div>Status<br><span id="status" class="badge">-</span></div>
+</div>
 </div>
 
+<!-- CHART -->
 <div class="card">
-<h3>📊 Grafik Mingguan</h3>
-<div id="chart" class="chart-bar"></div>
+<h3>📈 KM / Minggu</h3>
+<canvas id="chart"></canvas>
 </div>
 
+<!-- HISTORY -->
 <div class="card">
-<h3>📜 Riwayat Lari</h3>
+<h3>📜 History</h3>
 <div id="history"></div>
 </div>
 
 </div>
-
 </div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbyFFR0ETNNdE6UaA97a5D0caePx5Nis7Mn6emDWud2s9zHBKJQaWqs7LqA623Au6D0TgA/exec";
+const API="URL_WEB_APP_KAMU";
+let uid=null;
+let chart=null;
 
-let USER_ID=null;
+function load(v){loader.style.display=v?"flex":"none";}
 
-/* UTIL */
-function showLoader(v){loader.style.display=v?"flex":"none";}
-function toastMsg(msg){
-  toast.innerText=msg;
-  toast.style.display="block";
-  setTimeout(()=>toast.style.display="none",2000);
-}
-
-/* LOGIN */
+// LOGIN
 async function login(){
-  showLoader(true);
+  load(true);
 
-  try{
-    const res=await fetch(API+"?action=login",{
-      method:"POST",
-      body:JSON.stringify({
-        user:user.value,
-        password:password.value
-      })
-    });
-
-    const data=await res.json();
-
-    if(data.status==="success"){
-      USER_ID=data.user_id;
-      nama.innerText=data.nama;
-
-      loginCard.style.display="none";
-      dashboard.style.display="block";
-
-      loadDashboard();
-    }else{
-      toastMsg(data.message);
-    }
-
-  }catch(e){
-    toastMsg("Server error");
-  }
-
-  showLoader(false);
-}
-
-/* FORM */
-function toggleForm(){
-  formRun.style.display =
-    formRun.style.display==="none"?"block":"none";
-}
-
-/* SAVE RUN */
-async function saveRun(){
-  showLoader(true);
-
-  await fetch(API+"?action=workout",{
+  const r=await fetch(API,{
     method:"POST",
     body:JSON.stringify({
-      user_id:USER_ID,
-      tanggal:tanggal.value,
-      jarak:jarak.value,
-      durasi:durasi.value,
-      pace:pace.value,
-      avg_hr:avg_hr.value,
-      max_hr:max_hr.value
+      action:"login",
+      user:user.value,
+      password:pass.value
     })
   });
 
-  showLoader(false);
-  formRun.style.display="none";
-  document.querySelectorAll("#formRun input").forEach(i=>i.value="");
+  const d=await r.json();
 
-  toastMsg("Run tersimpan 🚀");
-  loadDashboard();
+  if(d.status==="success"){
+    uid=d.user_id;
+    nama.innerText=d.nama;
+
+    loginCard.style.display="none";
+    dashboard.style.display="block";
+
+    loadDash();
+  }else alert(d.message);
+
+  load(false);
 }
 
-/* LOAD DASHBOARD */
-async function loadDashboard(){
-  showLoader(true);
+// FORM
+function toggleForm(){
+  form.style.display=form.style.display=="none"?"block":"none";
+}
 
-  const dash=await fetch(API+"?action=getDashboard",{
+// SAVE
+async function save(){
+  load(true);
+
+  await fetch(API,{
     method:"POST",
-    body:JSON.stringify({user_id:USER_ID})
+    body:JSON.stringify({
+      action:"workout",
+      user_id:uid,
+      tanggal:tgl.value,
+      jarak:jarak.value,
+      durasi:durasi.value,
+      pace:pace.value,
+      avg_hr:hr.value
+    })
   });
 
-  const d=await dash.json();
+  form.style.display="none";
+  loadDash();
+  load(false);
+}
+
+// DASHBOARD
+async function loadDash(){
+  load(true);
+
+  // DASHBOARD DATA
+  const r=await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"dashboard",
+      user_id:uid
+    })
+  });
+
+  const d=await r.json();
 
   saran.innerText=d.saran;
 
-  progress.innerHTML=`
-    Avg HR: <b>${Math.round(d.avgHR)}</b><br>
-    Avg Pace: <b>${d.avgPace}</b><br>
-    Status: <b>${d.statusLatihan}</b>
-  `;
+  if(d.progress){
+    const p=d.progress;
 
-  /* LEVEL SYSTEM */
-  let level=Math.floor(d.avgPace)+1;
-  let xp=(150-d.avgHR);
-  xpbar.style.width=Math.max(5,xp)+"%";
+    avgHR.innerText=p.avg_hr.toFixed(0);
+    avgPace.innerText=p.avg_pace.toFixed(2);
+    improve.innerText=p.improvement.toFixed(2);
 
-  /* HISTORY */
-  const res=await fetch(API+"?action=getHistory",{
-    method:"POST",
-    body:JSON.stringify({user_id:USER_ID})
-  });
-
-  const data=await res.json();
-
-  if(data.status==="success"){
-    renderHistory(data.data);
-    renderChart(data.data);
+    status.innerText=p.status;
+    status.className="badge "+p.status;
   }
 
-  showLoader(false);
-}
+  // HISTORY
+  const h=await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"history",
+      user_id:uid
+    })
+  });
 
-/* HISTORY */
-function renderHistory(runs){
+  const data=await h.json();
+
   let html="";
-  runs.reverse().slice(0,7).forEach(r=>{
+  let weekly={};
+
+  data.data.forEach(r=>{
     html+=`
-    <div class="item">
-      ${r.tanggal}<br>
-      ${r.jarak} km • HR ${r.avg_hr}
+    <div>
+      ${r.tanggal} • ${r.jarak} km • HR ${r.hr}
     </div>`;
+
+    // kelompok minggu
+    const week = new Date(r.tanggal);
+    const key = week.getFullYear()+"-"+week.getMonth()+"-"+Math.ceil(week.getDate()/7);
+
+    weekly[key]=(weekly[key]||0)+Number(r.jarak);
   });
+
   history.innerHTML=html;
-}
 
-/* CHART */
-function renderChart(runs){
-  let week={};
+  // CHART
+  const labels=Object.keys(weekly);
+  const values=Object.values(weekly);
 
-  runs.forEach(r=>{
-    let d=new Date(r.tanggal);
-    let w=getWeek(d);
-    week[w]=(week[w]||0)+Number(r.jarak);
+  if(chart) chart.destroy();
+
+  chart=new Chart(document.getElementById("chart"),{
+    type:"line",
+    data:{
+      labels:labels,
+      datasets:[{
+        label:"KM",
+        data:values,
+        tension:0.4
+      }]
+    }
   });
 
-  chart.innerHTML="";
-
-  Object.values(week).slice(-6).forEach(km=>{
-    let h=Math.min(100,km*10);
-    chart.innerHTML+=`<div style="height:${h}%"></div>`;
-  });
-}
-
-function getWeek(d){
-  const first=new Date(d.getFullYear(),0,1);
-  return Math.ceil((((d-first)/86400000)+first.getDay()+1)/7);
+  load(false);
 }
 </script>
 
