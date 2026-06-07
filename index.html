@@ -29,7 +29,6 @@ body{
   padding:16px;
 }
 
-/* CARD */
 .card{
   background:rgba(255,255,255,0.03);
   backdrop-filter:blur(10px);
@@ -39,8 +38,7 @@ body{
   border:1px solid rgba(255,255,255,0.05);
 }
 
-/* INPUT */
-input,button{
+input,button,select{
   width:100%;
   padding:12px;
   margin-top:10px;
@@ -49,7 +47,7 @@ input,button{
   font-size:14px;
 }
 
-input{
+input,select{
   background:#020617;
   color:white;
   border:1px solid #1e293b;
@@ -64,14 +62,12 @@ button{
 
 button:hover{opacity:.9}
 
-/* HEADER */
 .header{
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
-/* GRID */
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -79,7 +75,6 @@ button:hover{opacity:.9}
   margin-top:10px;
 }
 
-/* BADGE */
 .badge{
   padding:6px 10px;
   border-radius:999px;
@@ -91,7 +86,6 @@ button:hover{opacity:.9}
 .improving{background:#16a34a}
 .normal{background:#64748b}
 
-/* LOADER */
 .loader{
   position:fixed;
   inset:0;
@@ -111,7 +105,24 @@ button:hover{opacity:.9}
   to{transform:translateX(10px)}
 }
 
-/* RESPONSIVE */
+.link{
+  text-align:center;
+  margin-top:12px;
+  font-size:14px;
+}
+
+.link span{
+  color:var(--accent);
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.link span:hover{
+  text-decoration:underline;
+  opacity:0.8;
+}
+
 @media(max-width:480px){
   .grid{grid-template-columns:1fr}
 }
@@ -120,16 +131,46 @@ button:hover{opacity:.9}
 
 <body>
 
-<div class="loader" id="loader"><span>🏃</span></div>
+<div class="loader" id="loader"><span>🏃‍♂️</span></div>
 
 <div class="container">
 
 <!-- LOGIN -->
 <div id="loginCard" class="card">
-<h2>Login</h2>
-<input id="user" placeholder="Nama / Email">
-<input id="pass" type="password" placeholder="Password">
-<button onclick="login()">Masuk</button>
+<h2>🏃 RunTracker</h2>
+
+<input id="user" placeholder="User / Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<div class="link">
+Belum punya akun? <span onclick="showRegister()">Daftar</span>
+</div>
+</div>
+
+<!-- REGISTER -->
+<div id="registerCard" class="card" style="display:none;">
+<h2>Daftar</h2>
+
+<input id="r_nama" placeholder="Nama">
+<input id="r_email" placeholder="Email">
+<input id="r_password" type="password" placeholder="Password">
+<input id="r_usia" placeholder="Usia">
+<input id="r_tinggi" placeholder="Tinggi">
+<input id="r_berat" placeholder="Berat">
+
+<select id="r_tujuan">
+  <option value="">Pilih Tujuan</option>
+  <option value="endurance">Endurance</option>
+  <option value="turun_bb">Turun BB</option>
+</select>
+
+<button onclick="register()">Daftar</button>
+
+<div class="link">
+Sudah punya akun? <span onclick="showLogin()">Login</span>
+</div>
 </div>
 
 <!-- DASHBOARD -->
@@ -140,7 +181,6 @@ button:hover{opacity:.9}
 <button onclick="toggleForm()">My SetorRun</button>
 </div>
 
-<!-- FORM -->
 <div id="form" class="card" style="display:none">
 <input id="tgl" type="date">
 <input id="jarak" placeholder="Jarak (km)">
@@ -150,13 +190,11 @@ button:hover{opacity:.9}
 <button onclick="save()">Simpan</button>
 </div>
 
-<!-- AI COACH -->
 <div class="card">
 <h3>🤖 AI Coach</h3>
 <p id="saran"></p>
 </div>
 
-<!-- PROGRESS -->
 <div class="card">
 <h3>📊 Progress</h3>
 <div class="grid">
@@ -167,13 +205,11 @@ button:hover{opacity:.9}
 </div>
 </div>
 
-<!-- CHART -->
 <div class="card">
 <h3>📈 KM / Minggu</h3>
 <canvas id="chart"></canvas>
 </div>
 
-<!-- HISTORY -->
 <div class="card">
 <h3>📜 History</h3>
 <div id="history"></div>
@@ -198,7 +234,7 @@ async function login(){
     body:JSON.stringify({
       action:"login",
       user:user.value,
-      password:pass.value
+      password:password.value
     })
   });
 
@@ -215,6 +251,46 @@ async function login(){
   }else alert(d.message);
 
   load(false);
+}
+
+// REGISTER
+async function register(){
+
+  // 🔥 VALIDASI TAMBAHAN
+  if(!r_nama.value || !r_email.value || !r_password.value || !r_tujuan.value){
+    alert("Semua field wajib diisi!");
+    return;
+  }
+
+  load(true);
+
+  await fetch(API+"?action=register",{
+    method:"POST",
+    body:JSON.stringify({
+      nama:r_nama.value,
+      email:r_email.value,
+      password:r_password.value,
+      usia:r_usia.value,
+      tinggi:r_tinggi.value,
+      berat:r_berat.value,
+      tujuan:r_tujuan.value // ✅ FIX UTAMA
+    })
+  });
+
+  load(false);
+  alert("Akun berhasil dibuat & program otomatis dibuat");
+  showLogin();
+}
+
+// NAV
+function showRegister(){
+  loginCard.style.display="none";
+  registerCard.style.display="block";
+}
+
+function showLogin(){
+  registerCard.style.display="none";
+  loginCard.style.display="block";
 }
 
 // FORM
@@ -248,7 +324,6 @@ async function save(){
 async function loadDash(){
   load(true);
 
-  // DASHBOARD DATA
   const r=await fetch(API,{
     method:"POST",
     body:JSON.stringify({
@@ -272,7 +347,6 @@ async function loadDash(){
     status.className="badge "+p.status;
   }
 
-  // HISTORY
   const h=await fetch(API,{
     method:"POST",
     body:JSON.stringify({
@@ -292,7 +366,6 @@ async function loadDash(){
       ${r.tanggal} • ${r.jarak} km • HR ${r.hr}
     </div>`;
 
-    // kelompok minggu
     const week = new Date(r.tanggal);
     const key = week.getFullYear()+"-"+week.getMonth()+"-"+Math.ceil(week.getDate()/7);
 
@@ -301,7 +374,6 @@ async function loadDash(){
 
   history.innerHTML=html;
 
-  // CHART
   const labels=Object.keys(weekly);
   const values=Object.values(weekly);
 
