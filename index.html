@@ -35,6 +35,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -46,9 +47,7 @@
             animation: dash 2.5s linear infinite;
         }
         @keyframes dash {
-            to {
-                stroke-dashoffset: 0;
-            }
+            to { stroke-dashoffset: 0; }
         }
         .runner-anim {
             animation: bounce 0.6s infinite alternate;
@@ -56,6 +55,103 @@
         @keyframes bounce {
             from { transform: translateY(0); }
             to { transform: translateY(-8px); }
+        }
+
+        /* --- ANIMASI BIOMEKANIKA GERAKAN STRETCHING (WARMUP & COOLDOWN) --- */
+        /* 1. Leg Swings */
+        @keyframes anim-leg-swing {
+            0% { transform: rotate(-30deg); }
+            100% { transform: rotate(35deg); }
+        }
+        .swing-leg-active {
+            transform-origin: 50px 75px;
+            animation: anim-leg-swing 1.2s ease-in-out infinite alternate;
+        }
+
+        /* 2. High Knees */
+        @keyframes anim-high-knee-left {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-55deg); }
+        }
+        @keyframes anim-high-knee-right {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(55deg); }
+        }
+        .hk-left-leg {
+            transform-origin: 45px 75px;
+            animation: anim-high-knee-left 0.8s ease-in-out infinite;
+        }
+        .hk-right-leg {
+            transform-origin: 55px 75px;
+            animation: anim-high-knee-right 0.8s ease-in-out infinite;
+            animation-delay: 0.4s;
+        }
+
+        /* 3. Butt Kicks */
+        @keyframes anim-butt-kick-left {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(80deg); }
+        }
+        @keyframes anim-butt-kick-right {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(80deg); }
+        }
+        .bk-left-calf {
+            transform-origin: 45px 90px;
+            animation: anim-butt-kick-left 0.7s ease-in-out infinite;
+        }
+        .bk-right-calf {
+            transform-origin: 55px 90px;
+            animation: anim-butt-kick-right 0.7s ease-in-out infinite;
+            animation-delay: 0.35s;
+        }
+
+        /* 4. Walking Lunges */
+        @keyframes anim-lunge {
+            0%, 100% { transform: translateY(0) scaleY(1); }
+            50% { transform: translateY(12px) scaleY(0.85); }
+        }
+        .lunge-body {
+            transform-origin: 50px 110px;
+            animation: anim-lunge 1.8s ease-in-out infinite;
+        }
+
+        /* 5. Calf Stretch */
+        @keyframes anim-calf-lean {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-4deg); }
+        }
+        .calf-stretch-body {
+            transform-origin: 40px 110px;
+            animation: anim-calf-lean 2s ease-in-out infinite;
+        }
+
+        /* 6. Quad Stretch */
+        @keyframes anim-quad-balance {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .quad-stretch-body {
+            animation: anim-quad-balance 1.5s ease-in-out infinite;
+        }
+
+        /* 7. Hamstring Fold */
+        @keyframes anim-hamstring-fold {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(15deg); }
+        }
+        .hamstring-fold-body {
+            transform-origin: 50px 75px;
+            animation: anim-hamstring-fold 2.5s ease-in-out infinite;
+        }
+
+        /* 8. Shoulder/Arm Stretch */
+        @keyframes anim-arm-pull {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-4px); }
+        }
+        .arm-pull-active {
+            animation: anim-arm-pull 1.6s ease-in-out infinite;
         }
     </style>
 </head>
@@ -524,32 +620,53 @@
                         <span class="bg-brand-volt/10 text-brand-volt text-xs font-bold px-3 py-1.5 rounded-full">AI Coach Verified</span>
                     </div>
 
-                    <!-- PANDUAN PEMANASAN & PENDINGINAN INTERAKTIF -->
+                    <!-- INTERACTIVE ANIMATED ROUTINES WIDGET -->
                     <div class="bg-white dark:bg-brand-card p-6 rounded-2xl border dark:border-brand-border border-slate-200">
-                        <div class="flex items-center space-x-2 text-brand-orange mb-3">
-                            <span class="text-xl">🏃‍♂️</span>
-                            <h4 class="font-bold text-base">Panduan Rutinitas Pemanasan & Pendinginan</h4>
-                        </div>
-                        <p class="text-xs text-slate-400 mb-4 leading-relaxed">Jangan langsung lari! Lakukan pemanasan dinamis sebelum berlari dan pendinginan statis setelahnya untuk menghindari cedera sendi dan otot.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-4 bg-slate-100 dark:bg-slate-950/60 rounded-xl border dark:border-slate-800">
-                                <h5 class="text-sm font-extrabold text-brand-orange flex items-center mb-2">🔥 Pemanasan Dinamis (Pre-Run: 5-10 m)</h5>
-                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 list-disc pl-4 leading-relaxed">
-                                    <li><strong>Leg Swings:</strong> Ayunkan kaki maju mundur untuk melenturkan pinggul (10x per kaki).</li>
-                                    <li><strong>Butt Kicks:</strong> Joging di tempat sambil menepuk tumit ke bokong untuk aktifkan hamstring (30 detik).</li>
-                                    <li><strong>High Knees:</strong> Angkat lutut tinggi bergantian melatih fleksor pinggul (30 detik).</li>
-                                    <li><strong>Walking Lunges:</strong> Langkah maju lebar untuk meregangkan quad & bokong (10 repetisi).</li>
-                                </ul>
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                            <div>
+                                <h4 class="font-extrabold text-lg text-slate-800 dark:text-white flex items-center gap-2">
+                                    <span>🏃‍♂️</span> Player Visual Rutinitas Lari (Pemanasan & Pendinginan)
+                                </h4>
+                                <p class="text-xs text-slate-400 mt-0.5">Pilih gerakan di bawah untuk melihat simulasi biomekanika gerak & instruksi durasinya.</p>
                             </div>
-                            <div class="p-4 bg-slate-100 dark:bg-slate-950/60 rounded-xl border dark:border-slate-800">
-                                <h5 class="text-sm font-extrabold text-green-400 flex items-center mb-2">❄️ Pendinginan Statis (Post-Run: 5 m)</h5>
-                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 list-disc pl-4 leading-relaxed">
-                                    <li><strong>Calf Stretch:</strong> Dorong tumit ke tanah di belakang Anda untuk meredakan kram betis (tahan 20 detik).</li>
-                                    <li><strong>Quad Stretch:</strong> Tarik kaki ke belakang sampai bokong meregangkan paha depan (tahan 20 detik).</li>
-                                    <li><strong>Hamstring Fold:</strong> Julurkan satu kaki ke depan, tekuk pinggul sedikit demi melemaskan paha belakang.</li>
-                                    <li><strong>Child's Pose:</strong> Duduk bersimpuh, ulurkan tangan ke depan untuk relaksasi punggung bawah.</li>
-                                </ul>
+                            <!-- Switch Category Buttons -->
+                            <div class="flex gap-1.5 bg-slate-100 dark:bg-slate-950 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 self-start">
+                                <button id="btn-routine-warmup" onclick="toggleRoutineCategory('warmup')" class="px-3 py-1.5 text-xs font-black rounded-lg transition-all bg-brand-orange text-white">
+                                    🔥 Pemanasan Dinamis
+                                </button>
+                                <button id="btn-routine-cooldown" onclick="toggleRoutineCategory('cooldown')" class="px-3 py-1.5 text-xs font-black rounded-lg text-slate-400 dark:hover:text-white transition-all">
+                                    ❄️ Pendinginan Statis
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Main Routine Visual Player Panel -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Column 1: Playlist / List of Movements -->
+                            <div class="lg:col-span-1 space-y-2 max-h-80 overflow-y-auto pr-1" id="routine-playlist">
+                                <!-- Dynamic entries will populate here via Javascript -->
+                            </div>
+
+                            <!-- Column 2 & 3: Visual Animation Display and Instructions -->
+                            <div class="lg:col-span-2 bg-slate-50 dark:bg-slate-950 p-6 rounded-2xl border border-slate-200 dark:border-slate-900 flex flex-col md:flex-row items-center gap-6">
+                                <!-- SVG Container for Biomechanical Loop -->
+                                <div class="w-36 h-44 flex-shrink-0 bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-2xl flex items-center justify-center relative overflow-hidden" id="stretching-animation-container">
+                                    <!-- Injected dynamically based on active selection -->
+                                </div>
+
+                                <!-- Description Panel -->
+                                <div class="flex-1 space-y-3">
+                                    <div class="flex items-center gap-2">
+                                        <span id="active-stretch-tag" class="px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-brand-orange/20 text-brand-orange">Dinamis</span>
+                                        <span id="active-stretch-time" class="text-xs font-bold text-brand-volt">10-15 Repetisi</span>
+                                    </div>
+                                    <h4 id="active-stretch-title" class="text-lg font-black text-slate-800 dark:text-white">Leg Swings</h4>
+                                    <p id="active-stretch-desc" class="text-xs text-slate-500 dark:text-slate-300 leading-relaxed">Berdirilah tegak dengan bertumpu pada salah satu kaki. Ayunkan satu kaki lainnya maju mundur secara lembut dan terkendali. Jaga postur tubuh bagian atas tetap lurus.</p>
+                                    <div class="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl text-[11px] border dark:border-slate-800">
+                                        <strong class="text-slate-700 dark:text-slate-200 block mb-0.5">Kunci Biomekanika:</strong>
+                                        <span id="active-stretch-key" class="text-slate-500 dark:text-slate-400">Melenturkan otot sendi pinggul (hip flexor) agar stride lari lebih lebar & bebas.</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1075,6 +1192,8 @@
             updateCurrentUserDashboard();
             initializeCharts();
             setupReminders();
+            // Load initial stretching player
+            renderRoutinePlaylist('warmup');
         }
 
         // NAVIGATION SYSTEM
@@ -1118,6 +1237,8 @@
 
             if (viewId === 'coach') {
                 renderWeeklyTrainingPlan();
+                // Load Visual Playlist
+                renderRoutinePlaylist(currentRoutineCategory);
             }
 
             if (viewId === 'chat') {
@@ -1307,6 +1428,256 @@
             await enqueueSync('TRAINING_PLAN', trainingPlanObj);
         }
 
+        // Database of exercises with inline animated SVG configurations
+        const stretchingDatabase = {
+            warmup: [
+                {
+                    id: "leg-swings",
+                    title: "Leg Swings (Ayun Kaki)",
+                    time: "10-15 Repetisi/kaki",
+                    desc: "Berdiri tegak dengan tumpuan salah satu kaki. Ayunkan satu kaki lainnya maju mundur secara lembut dan terkendali. Jaga tubuh bagian atas lurus.",
+                    key: "Melenturkan persendian pinggul (hip flexors) agar stride langkah kaki lari lebih bebas & lebar.",
+                    svg: `
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
+                        <line x1="20" y1="10" x2="20" y2="110" stroke="#475569" stroke-width="3" stroke-dasharray="3 3"/>
+                        <circle cx="50" cy="20" r="7" fill="currentColor"/>
+                        <line x1="50" y1="27" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="50" y1="35" x2="25" y2="40" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                        <!-- Support Leg -->
+                        <line x1="50" y1="75" x2="45" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Swinging Leg -->
+                        <g class="swing-leg-active">
+                            <line x1="50" y1="75" x2="50" y2="108" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="50" cy="108" r="2.5" fill="#FF5722"/>
+                        </g>
+                    </svg>`
+                },
+                {
+                    id: "high-knees",
+                    title: "High Knees (Angkat Lutut)",
+                    time: "30 Detik",
+                    desc: "Lakukan gerakan setengah joging di tempat dengan mengangkat lutut setinggi pinggang secara bergantian cepat. Ayunkan lengan seirama.",
+                    key: "Meningkatkan sirkulasi darah serta melatih otot paha depan (quadriceps) & betis secara dinamis.",
+                    svg: `
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
+                        <circle cx="50" cy="22" r="7" fill="currentColor"/>
+                        <line x1="50" y1="29" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Left High Knee -->
+                        <g class="hk-left-leg">
+                            <line x1="45" y1="75" x2="25" y2="75" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="25" y1="75" x2="25" y2="100" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        </g>
+                        <!-- Right High Knee -->
+                        <g class="hk-right-leg">
+                            <line x1="55" y1="75" x2="75" y2="75" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="75" y1="75" x2="75" y2="100" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                        </g>
+                    </svg>`
+                },
+                {
+                    id: "butt-kicks",
+                    title: "Butt Kicks (Tumit ke Belakang)",
+                    time: "30 Detik",
+                    desc: "Joging santai di tempat, tekuk lutut ke belakang hingga tumit mendekati atau menyentuh bokong Anda secara bergantian.",
+                    key: "Meregangkan paha depan secara aktif & mempersiapkan otot hamstring menghadapi tekanan tinggi.",
+                    svg: `
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
+                        <circle cx="50" cy="22" r="7" fill="currentColor"/>
+                        <line x1="50" y1="29" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Left Knee static down -->
+                        <line x1="45" y1="75" x2="45" y2="90" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        <g class="bk-left-calf">
+                            <line x1="45" y1="90" x2="45" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        </g>
+                        <!-- Right Knee bent backward -->
+                        <line x1="55" y1="75" x2="55" y2="90" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                        <g class="bk-right-calf">
+                            <line x1="55" y1="90" x2="70" y2="80" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                        </g>
+                    </svg>`
+                },
+                {
+                    id: "walking-lunges",
+                    title: "Walking Lunges (Langkah Lebar)",
+                    time: "10 Langkah Bergantian",
+                    desc: "Langkahkan kaki jauh ke depan, lalu turunkan pinggul hingga lutut belakang hampir menyentuh lantai. Berdiri kembali dan ulangi kaki depan.",
+                    key: "Membangun stabilitas sendi lutut, otot bokong (glutes), & koordinasi keseimbangan lari.",
+                    svg: `
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-200 animate-[anim-lunge_1.8s_ease-in-out_infinite]" viewBox="0 0 100 120">
+                        <circle cx="50" cy="25" r="7" fill="currentColor"/>
+                        <line x1="50" y1="32" x2="50" y2="70" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Lunging front Leg -->
+                        <line x1="50" y1="70" x2="70" y2="85" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="70" y1="85" x2="68" y2="110" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Back leg trailing -->
+                        <line x1="50" y1="70" x2="30" y2="85" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="30" y1="85" x2="15" y2="105" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                    </svg>`
+                }
+            ],
+            cooldown: [
+                {
+                    id: "calf-stretch",
+                    title: "Calf Stretch (Regang Betis)",
+                    time: "20 Detik/kaki",
+                    desc: "Julurkan satu kaki lurus ke belakang dengan tumit menempel di tanah, tekuk kaki depan dan condongkan badan ke depan sampai betis belakang tegang.",
+                    key: "Menghilangkan kekakuan otot betis pasca-lari untuk mencegah kram malam & Achilles Tendonitis.",
+                    svg: `
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
+                        <line x1="80" y1="10" x2="80" y2="110" stroke="#475569" stroke-width="3" stroke-dasharray="3 3"/>
+                        <g class="calf-stretch-body">
+                            <circle cx="45" cy="22" r="7" fill="currentColor"/>
+                            <line x1="45" y1="29" x2="45" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                            <!-- Hands pushing the wall -->
+                            <line x1="45" y1="38" x2="80" y2="38" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            <!-- Rear leg stretching -->
+                            <line x1="45" y1="75" x2="15" y2="110" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                            <!-- Front bent leg -->
+                            <line x1="45" y1="75" x2="55" y2="90" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="55" y1="90" x2="50" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        </g>
+                    </svg>`
+                },
+                {
+                    id: "quad-stretch",
+                    title: "Quad Stretch (Regang Paha)",
+                    time: "20 Detik/kaki",
+                    desc: "Berdiri seimbang pada satu kaki. Tekuk kaki satunya ke belakang, pegang pergelangan kakinya dengan tangan, lalu tarik mendekati bokong Anda.",
+                    key: "Melemaskan otot paha depan (quadriceps) yang mengalami ketegangan konstan selama hentakan lari.",
+                    svg: `
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
+                        <g class="quad-stretch-body">
+                            <circle cx="50" cy="22" r="7" fill="currentColor"/>
+                            <line x1="50" y1="29" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                            <!-- Support leg -->
+                            <line x1="50" y1="75" x2="50" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                            <!-- Bent leg held by hand -->
+                            <line x1="50" y1="75" x2="40" y2="95" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="40" y1="95" x2="33" y2="75" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                            <!-- Arm holding the leg -->
+                            <line x1="50" y1="35" x2="33" y2="75" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                        </g>
+                    </svg>`
+                },
+                {
+                    id: "hamstring-fold",
+                    title: "Hamstring Fold (Lipat Tubuh)",
+                    time: "20 Detik",
+                    desc: "Silangkan kaki atau buka selebar bahu. Lipat tubuh bagian atas ke depan ke bawah perlahan, usahakan tangan menyentuh lantai tanpa menekuk lutut.",
+                    key: "Meredakan ketegangan paha belakang (hamstring) & merelaksasikan otot-otot punggung bawah.",
+                    svg: `
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
+                        <!-- Straight legs -->
+                        <line x1="45" y1="75" x2="45" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="55" y1="75" x2="55" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Folded upper body -->
+                        <g class="hamstring-fold-body">
+                            <line x1="50" y1="75" x2="50" y2="35" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="50" cy="27" r="7" fill="#FF5722"/>
+                            <!-- Dangling arms -->
+                            <line x1="50" y1="42" x2="35" y2="70" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                        </g>
+                    </svg>`
+                },
+                {
+                    id: "shoulder-stretch",
+                    title: "Shoulder Stretch (Regang Bahu)",
+                    time: "15 Detik/sisi",
+                    desc: "Tarik satu lengan lurus menyilang di depan dada Anda, gunakan tangan satunya untuk mengunci & menekan dekat ke bahu Anda.",
+                    key: "Mengurangi ketegangan area bahu, belikat, & punggung atas akibat mengayun lengan terus menerus.",
+                    svg: `
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
+                        <circle cx="50" cy="22" r="7" fill="currentColor"/>
+                        <line x1="50" y1="29" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Stand legs -->
+                        <line x1="45" y1="75" x2="42" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="55" y1="75" x2="58" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Arms crossing with active pull animation -->
+                        <g class="arm-pull-active">
+                            <!-- Crossed arm -->
+                            <line x1="50" y1="35" x2="15" y2="35" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                            <!-- Pulling arm locking it -->
+                            <line x1="30" y1="45" x2="30" y2="25" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                        </g>
+                    </svg>`
+                }
+            ]
+        };
+
+        let currentRoutineCategory = 'warmup';
+        let activeRoutineId = 'leg-swings';
+
+        function toggleRoutineCategory(cat) {
+            currentRoutineCategory = cat;
+            
+            const btnWarmup = document.getElementById('btn-routine-warmup');
+            const btnCooldown = document.getElementById('btn-routine-cooldown');
+
+            if (cat === 'warmup') {
+                btnWarmup.className = "px-3 py-1.5 text-xs font-black rounded-lg transition-all bg-brand-orange text-white";
+                btnCooldown.className = "px-3 py-1.5 text-xs font-black rounded-lg text-slate-400 dark:hover:text-white transition-all";
+            } else {
+                btnCooldown.className = "px-3 py-1.5 text-xs font-black rounded-lg transition-all bg-brand-orange text-white";
+                btnWarmup.className = "px-3 py-1.5 text-xs font-black rounded-lg text-slate-400 dark:hover:text-white transition-all";
+            }
+
+            renderRoutinePlaylist(cat);
+            // Auto select first of category
+            selectStretchingExercise(stretchingDatabase[cat][0].id);
+        }
+
+        function renderRoutinePlaylist(cat) {
+            const playlistContainer = document.getElementById('routine-playlist');
+            playlistContainer.innerHTML = '';
+
+            const list = stretchingDatabase[cat];
+            list.forEach(ex => {
+                const btn = document.createElement('button');
+                btn.id = `playlist-item-${ex.id}`;
+                btn.onclick = () => selectStretchingExercise(ex.id);
+                btn.className = `w-full text-left p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between border ${ex.id === activeRoutineId ? 'bg-brand-orange/10 border-brand-orange text-brand-orange' : 'bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300'}`;
+                
+                btn.innerHTML = `
+                    <span>${ex.title}</span>
+                    <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">${ex.time}</span>
+                `;
+                playlistContainer.appendChild(btn);
+            });
+        }
+
+        function selectStretchingExercise(id) {
+            activeRoutineId = id;
+
+            // Highlight in playlist
+            const listItems = document.getElementById('routine-playlist').children;
+            for (let item of listItems) {
+                if (item.id === `playlist-item-${id}`) {
+                    item.className = "w-full text-left p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between border bg-brand-orange/10 border-brand-orange text-brand-orange";
+                } else {
+                    item.className = "w-full text-left p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between border bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300";
+                }
+            }
+
+            const activeEx = stretchingDatabase[currentRoutineCategory].find(ex => ex.id === id);
+            if (!activeEx) return;
+
+            // Update UI Details & Inject Animated SVG
+            document.getElementById('stretching-animation-container').innerHTML = activeEx.svg;
+            document.getElementById('active-stretch-title').innerText = activeEx.title;
+            document.getElementById('active-stretch-desc').innerText = activeEx.desc;
+            document.getElementById('active-stretch-time').innerText = activeEx.time;
+            document.getElementById('active-stretch-key').innerText = activeEx.key;
+
+            const activeTag = document.getElementById('active-stretch-tag');
+            if (currentRoutineCategory === 'warmup') {
+                activeTag.innerText = "Dinamis (Pre-run)";
+                activeTag.className = "px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-brand-orange/20 text-brand-orange";
+            } else {
+                activeTag.innerText = "Statis (Post-run)";
+                activeTag.className = "px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-green-500/20 text-green-400";
+            }
+        }
+
         function renderWeeklyTrainingPlan() {
             const grid = document.getElementById('coach-sessions-grid');
             grid.innerHTML = '';
@@ -1447,20 +1818,14 @@
             });
         }
 
-        // Kalkulasi Prediksi Waktu Lomba berbasis matematis VO2Max (Daniels VDOT approximation)
         function calculateRacePredictions(vo2max) {
             if (!vo2max || isNaN(vo2max)) return;
 
             // Menggunakan perkiraan matematis VDOT untuk kecepatan fungsional
-            // VDOT = VO2Max fungsional
             const vdot = vo2max;
 
-            // Kecepatan lari konstan (meter per menit) berdasarkan VDOT
-            // Menggunakan pendekatan formula Daniels
+            // Kecepatan lari konstan (meter per menit) berdasarkan VDOT Daniels Formula
             const velocity = 29.54 + 5.0007 * vdot - 0.00548 * vdot * vdot;
-
-            // Prediksi Riegel: T2 = T1 * (D2 / D1)^1.06
-            // Mengambil benchmark 10K fungsional dari VDOT
             const time10kMins = 10000 / velocity;
 
             const formatDuration = (totalMins) => {
@@ -1484,11 +1849,8 @@
             document.getElementById('race-42k').innerText = formatDuration(time42k);
 
             // Perhitungan Zona Pace Riil Lari (/km)
-            // Easy Pace: ~70% dari kecepatan VO2Max
             const paceEasyDec = 1 / ((velocity * 0.70) / 1000);
-            // Tempo Pace: ~88% dari kecepatan VO2Max
             const paceTempoDec = 1 / ((velocity * 0.88) / 1000);
-            // Interval Pace: ~100% dari kecepatan VO2Max
             const paceIntervalDec = 1 / (velocity / 1000);
 
             const formatPace = (decimalMins) => {
@@ -1966,85 +2328,6 @@
             showCustomPopup("Notifikasi Sinkronisasi", "Semua log aktivitas dan rencana mingguan lari Anda telah berhasil dicadangkan ke Google Sheets.", "info");
         }
 
-        // EXPORT EXCEL & PDF
-        function exportToCSV() {
-            const userLogs = dbLogs.filter(log => log.userId === currentUser.id);
-            if (userLogs.length === 0) {
-                showCustomPopup("Gagal Eksport", "Belum ada log aktivitas lari yang tercatat untuk diekspor.", "error");
-                return;
-            }
-
-            const csv = Papa.unparse(userLogs);
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `RunTracker_Logs_${currentUser.username}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const userLogs = dbLogs.filter(log => log.userId === currentUser.id);
-
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(22);
-            doc.setTextColor(255, 87, 34);
-            doc.text("LAPORAN PERFORMA - AI RUN COACH", 14, 25);
-
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.text(`Dicetak pada: ${new Date().toLocaleDateString('id-ID')}`, 14, 32);
-
-            doc.setDrawColor(200);
-            doc.line(14, 35, 196, 35);
-
-            doc.setFontSize(14);
-            doc.setTextColor(0, 0, 0);
-            doc.text("Profil Pelari", 14, 45);
-
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.text(`Nama: ${currentUser.name} (@${currentUser.username})`, 14, 52);
-            doc.text(`Tujuan Program: ${currentUser.goal}`, 14, 58);
-            doc.text(`BMI Kontrol: ${currentUser.bmi} (${currentUser.bmiStatus})`, 14, 64);
-            doc.text(`VO2Max Estimasi Terkini: ${currentUser.vo2max} ml/kg/min`, 14, 70);
-
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(14);
-            doc.text("Aktivitas Kumulatif", 14, 85);
-
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.text(`Total Lari: ${userLogs.length} Sesi`, 14, 92);
-            const totalD = userLogs.reduce((acc, curr) => acc + curr.distance, 0);
-            doc.text(`Total Jarak Tempuh: ${totalD.toFixed(2)} km`, 14, 98);
-
-            doc.save(`Laporan_Latihan_${currentUser.username}.pdf`);
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const sunIcon = document.getElementById('theme-icon-sun');
-            const moonIcon = document.getElementById('theme-icon-moon');
-
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-                localStorage.setItem("rt_theme", "light");
-            } else {
-                html.classList.add('dark');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-                localStorage.setItem("rt_theme", "dark");
-            }
-        }
-
-        // OFFLINE SYNC SYSTEM (Google Sheets Real-time Backend Engine)
         function checkOnlineStatus() {
             const dot = document.getElementById('sync-indicator-dot');
             const txt = document.getElementById('sync-indicator-text');
