@@ -1378,18 +1378,33 @@
 
         function populateProfileForm() {
             if (!currentUser) return;
-            document.getElementById('prof-name').value = currentUser.name;
-            document.getElementById('prof-dob').value = currentUser.dob;
-            document.getElementById('prof-gender').value = currentUser.gender;
-            document.getElementById('prof-goal').value = currentUser.goal;
-            document.getElementById('prof-height').value = currentUser.height;
-            document.getElementById('prof-weight').value = currentUser.weight;
-            document.getElementById('prof-target-weight').value = currentUser.targetWeight;
-            document.getElementById('prof-exp').value = currentUser.experience;
-            document.getElementById('prof-rhr').value = currentUser.rhr;
+            document.getElementById('prof-name').value = currentUser.name || '';
+            
+            let dobValue = '';
+            if (currentUser.dob) {
+                try {
+                    const d = new Date(currentUser.dob);
+                    if (!isNaN(d.getTime())) {
+                        const yyyy = d.getFullYear();
+                        const mm = String(d.getMonth() + 1).padStart(2, '0');
+                        const dd = String(d.getDate()).padStart(2, '0');
+                        dobValue = `${yyyy}-${mm}-${dd}`;
+                    }
+                } catch (e) {
+                    dobValue = currentUser.dob;
+                }
+            }
+            document.getElementById('prof-dob').value = dobValue;
+            document.getElementById('prof-gender').value = currentUser.gender || 'Male';
+            document.getElementById('prof-goal').value = currentUser.goal || 'Menjaga Kebugaran';
+            document.getElementById('prof-height').value = currentUser.height || 170;
+            document.getElementById('prof-weight').value = currentUser.weight || 70;
+            document.getElementById('prof-target-weight').value = currentUser.targetWeight || 65;
+            document.getElementById('prof-exp').value = currentUser.experience || 'Beginner';
+            document.getElementById('prof-rhr').value = currentUser.rhr || 70;
             document.getElementById('prof-mhr').value = currentUser.mhr || '';
-            document.getElementById('prof-injury').value = currentUser.injury;
-            document.getElementById('prof-comorbid').value = currentUser.comorbid;
+            document.getElementById('prof-injury').value = currentUser.injury || 'tidak ada';
+            document.getElementById('prof-comorbid').value = currentUser.comorbid || 'tidak ada';
 
             triggerDiagnosticCalculations();
         }
@@ -1415,7 +1430,11 @@
             document.getElementById('auto-bmi').innerText = `${bmi} (${status})`;
 
             const mhr = customMhr || (220 - age);
-            const vo2max = (15.3 * (mhr / rhr)).toFixed(1);
+            
+            let vo2max = 38.0;
+            if (rhr && !isNaN(rhr)) {
+                vo2max = (15.3 * (mhr / rhr)).toFixed(1);
+            }
             document.getElementById('auto-vo2max').innerText = vo2max + " ml/kg/min";
 
             let weeklyTarget = 12;
