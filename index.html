@@ -524,6 +524,36 @@
                         <span class="bg-brand-volt/10 text-brand-volt text-xs font-bold px-3 py-1.5 rounded-full">AI Coach Verified</span>
                     </div>
 
+                    <!-- PANDUAN PEMANASAN & PENDINGINAN INTERAKTIF -->
+                    <div class="bg-white dark:bg-brand-card p-6 rounded-2xl border dark:border-brand-border border-slate-200">
+                        <div class="flex items-center space-x-2 text-brand-orange mb-3">
+                            <span class="text-xl">🏃‍♂️</span>
+                            <h4 class="font-bold text-base">Panduan Rutinitas Pemanasan & Pendinginan</h4>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-4 leading-relaxed">Jangan langsung lari! Lakukan pemanasan dinamis sebelum berlari dan pendinginan statis setelahnya untuk menghindari cedera sendi dan otot.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-slate-100 dark:bg-slate-950/60 rounded-xl border dark:border-slate-800">
+                                <h5 class="text-sm font-extrabold text-brand-orange flex items-center mb-2">🔥 Pemanasan Dinamis (Pre-Run: 5-10 m)</h5>
+                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 list-disc pl-4 leading-relaxed">
+                                    <li><strong>Leg Swings:</strong> Ayunkan kaki maju mundur untuk melenturkan pinggul (10x per kaki).</li>
+                                    <li><strong>Butt Kicks:</strong> Joging di tempat sambil menepuk tumit ke bokong untuk aktifkan hamstring (30 detik).</li>
+                                    <li><strong>High Knees:</strong> Angkat lutut tinggi bergantian melatih fleksor pinggul (30 detik).</li>
+                                    <li><strong>Walking Lunges:</strong> Langkah maju lebar untuk meregangkan quad & bokong (10 repetisi).</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-slate-100 dark:bg-slate-950/60 rounded-xl border dark:border-slate-800">
+                                <h5 class="text-sm font-extrabold text-green-400 flex items-center mb-2">❄️ Pendinginan Statis (Post-Run: 5 m)</h5>
+                                <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 list-disc pl-4 leading-relaxed">
+                                    <li><strong>Calf Stretch:</strong> Dorong tumit ke tanah di belakang Anda untuk meredakan kram betis (tahan 20 detik).</li>
+                                    <li><strong>Quad Stretch:</strong> Tarik kaki ke belakang sampai bokong meregangkan paha depan (tahan 20 detik).</li>
+                                    <li><strong>Hamstring Fold:</strong> Julurkan satu kaki ke depan, tekuk pinggul sedikit demi melemaskan paha belakang.</li>
+                                    <li><strong>Child's Pose:</strong> Duduk bersimpuh, ulurkan tangan ke depan untuk relaksasi punggung bawah.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="coach-sessions-grid">
                         <!-- Dynamic sessions generated from JavaScript -->
                     </div>
@@ -531,10 +561,76 @@
 
                 <!-- SECTION: ANALYTICS & LOAD -->
                 <section id="view-analytics" class="space-y-6 hidden">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-2xl font-black font-sport">Analisis Beban Latihan Kronis</h3>
-                            <p class="text-sm text-slate-400">Metrik Form, Fatigue, dan Fitness Terkalibrasi Database Cloud</p>
+                    <!-- ESTIMASI WAKTU LOMBA (RACE PREDICTOR) & PACING ZONES -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Race Predictor -->
+                        <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200 lg:col-span-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-md font-extrabold">Estimasi Waktu Lomba</h4>
+                                    <span class="text-[10px] bg-brand-orange/20 text-brand-orange font-bold px-2 py-0.5 rounded-full">Race Predictor</span>
+                                </div>
+                                <p class="text-xs text-slate-400 mb-4 leading-relaxed">Prediksi waktu lari Anda berdasarkan performa VO2Max aktual saat ini (menggunakan algoritma Riegel).</p>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center p-3 bg-slate-100 dark:bg-slate-900 rounded-xl">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm">🥉</span>
+                                            <strong class="text-xs">5K Run</strong>
+                                        </div>
+                                        <span id="race-5k" class="text-sm font-black text-brand-volt">--:--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-slate-100 dark:bg-slate-900 rounded-xl">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm">🥈</span>
+                                            <strong class="text-xs">10K Run</strong>
+                                        </div>
+                                        <span id="race-10k" class="text-sm font-black text-brand-volt">--:--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-slate-100 dark:bg-slate-900 rounded-xl">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm">🥇</span>
+                                            <strong class="text-xs">Half Marathon (21K)</strong>
+                                        </div>
+                                        <span id="race-21k" class="text-sm font-black text-brand-volt">--:--:--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-slate-100 dark:bg-slate-900 rounded-xl">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm">🏆</span>
+                                            <strong class="text-xs">Full Marathon (42K)</strong>
+                                        </div>
+                                        <span id="race-42k" class="text-sm font-black text-brand-volt">--:--:--</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] text-slate-500 mt-4 block italic">*Tingkat ketahanan otot (endurance) riil berpengaruh signifikan pada keakuratan prediksi lari jarak jauh.</span>
+                        </div>
+
+                        <!-- Kalkulator Zona Pace Detail -->
+                        <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200 lg:col-span-2">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-md font-extrabold">Kalkulator Zona Pace Lari</h4>
+                                <span class="text-[10px] bg-brand-volt/20 text-brand-volt font-bold px-2 py-0.5 rounded-full">Pacing Zones</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mb-4 leading-relaxed">Gunakan kisaran menit per kilometer (Pace) ini untuk menyinkronkan intensitas latihan harian Anda sesuai saran AI Coach.</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div class="p-4 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-[10px] text-blue-400 font-bold uppercase">Zone 2 - Easy Run</span>
+                                    <p id="pace-easy" class="text-lg font-black mt-1">--:-- /km</p>
+                                    <span class="text-[9px] text-slate-500 block mt-1">Sangat santai, pembakaran lemak efisien & masih bisa bicara lancar.</span>
+                                </div>
+                                <div class="p-4 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-[10px] text-yellow-500 font-bold uppercase">Zone 3/4 - Tempo</span>
+                                    <p id="pace-tempo" class="text-lg font-black mt-1">--:-- /km</p>
+                                    <span class="text-[9px] text-slate-500 block mt-1">Napas mulai terengah-engah sedang, melatih stamina kardio paru-paru.</span>
+                                </div>
+                                <div class="p-4 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-[10px] text-red-500 font-bold uppercase">Zone 5 - Interval Speed</span>
+                                    <p id="pace-interval" class="text-lg font-black mt-1">--:-- /km</p>
+                                    <span class="text-[9px] text-slate-500 block mt-1">Sprint maksimal untuk melatih daya ledak serta meningkatkan VO2Max.</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1351,6 +1447,61 @@
             });
         }
 
+        // Kalkulasi Prediksi Waktu Lomba berbasis matematis VO2Max (Daniels VDOT approximation)
+        function calculateRacePredictions(vo2max) {
+            if (!vo2max || isNaN(vo2max)) return;
+
+            // Menggunakan perkiraan matematis VDOT untuk kecepatan fungsional
+            // VDOT = VO2Max fungsional
+            const vdot = vo2max;
+
+            // Kecepatan lari konstan (meter per menit) berdasarkan VDOT
+            // Menggunakan pendekatan formula Daniels
+            const velocity = 29.54 + 5.0007 * vdot - 0.00548 * vdot * vdot;
+
+            // Prediksi Riegel: T2 = T1 * (D2 / D1)^1.06
+            // Mengambil benchmark 10K fungsional dari VDOT
+            const time10kMins = 10000 / velocity;
+
+            const formatDuration = (totalMins) => {
+                const h = Math.floor(totalMins / 60);
+                const m = Math.floor(totalMins % 60);
+                const s = Math.round((totalMins - Math.floor(totalMins)) * 60);
+                if (h > 0) {
+                    return `${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+                }
+                return `${m}:${s < 10 ? '0' : ''}${s}`;
+            };
+
+            // Riegel Formula scaling dari basis 10K
+            const time5k = time10kMins * Math.pow(5 / 10, 1.06);
+            const time21k = time10kMins * Math.pow(21.0975 / 10, 1.06);
+            const time42k = time10kMins * Math.pow(42.195 / 10, 1.06);
+
+            document.getElementById('race-5k').innerText = formatDuration(time5k);
+            document.getElementById('race-10k').innerText = formatDuration(time10kMins);
+            document.getElementById('race-21k').innerText = formatDuration(time21k);
+            document.getElementById('race-42k').innerText = formatDuration(time42k);
+
+            // Perhitungan Zona Pace Riil Lari (/km)
+            // Easy Pace: ~70% dari kecepatan VO2Max
+            const paceEasyDec = 1 / ((velocity * 0.70) / 1000);
+            // Tempo Pace: ~88% dari kecepatan VO2Max
+            const paceTempoDec = 1 / ((velocity * 0.88) / 1000);
+            // Interval Pace: ~100% dari kecepatan VO2Max
+            const paceIntervalDec = 1 / (velocity / 1000);
+
+            const formatPace = (decimalMins) => {
+                const m = Math.floor(decimalMins);
+                const s = Math.round((decimalMins - m) * 60);
+                return `${m}:${s < 10 ? '0' : ''}${s}`;
+            };
+
+            document.getElementById('pace-easy').innerText = `${formatPace(paceEasyDec)} /km`;
+            document.getElementById('pace-tempo').innerText = `${formatPace(paceTempoDec)} /km`;
+            document.getElementById('pace-interval').innerText = `${formatPace(paceIntervalDec)} /km`;
+        }
+
         function updateCurrentUserDashboard() {
             if (!currentUser) return;
 
@@ -1394,6 +1545,9 @@
             document.getElementById('stat-total-dist').innerText = totalDist.toFixed(1) + " km";
             document.getElementById('stat-avg-pace').innerText = avgPaceStr + " /km";
             document.getElementById('stat-vo2max').innerText = dynamicVo2;
+
+            // Trigger kalkulasi prediksi lomba & kalkulator pace
+            calculateRacePredictions(dynamicVo2);
 
             let cat = "Good";
             if (dynamicVo2 < 35) cat = "Poor";
@@ -1812,6 +1966,7 @@
             showCustomPopup("Notifikasi Sinkronisasi", "Semua log aktivitas dan rencana mingguan lari Anda telah berhasil dicadangkan ke Google Sheets.", "info");
         }
 
+        // EXPORT EXCEL & PDF
         function exportToCSV() {
             const userLogs = dbLogs.filter(log => log.userId === currentUser.id);
             if (userLogs.length === 0) {
