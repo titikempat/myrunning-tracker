@@ -278,8 +278,8 @@
                 </svg>
             </div>
             <h1 class="text-2xl font-black mt-6 tracking-wider text-white">RUN TRACKER</h1>
-            <p class="text-brand-volt text-xs font-bold tracking-widest mt-2 uppercase">AI Running Coach</p>
-            <p class="text-slate-400 text-sm mt-8 animate-pulse" id="loading-status">Menghubungkan ke Database Cloud...</p>
+            <p class="text-brand-volt text-xs font-bold tracking-widest mt-2 uppercase">AI Running Coach by KelarRun Community</p>
+            <p class="text-slate-400 text-sm mt-8 animate-pulse" id="loading-status">Menghubungkan ke Database Cloud....</p>
         </div>
     </div>
 
@@ -293,8 +293,8 @@
                 </svg>
                 <span class="text-3xl animate-bounce">🏃</span>
             </div>
-            <h5 id="action-loader-title" class="text-white font-extrabold text-lg mt-4">Menganalisis Performa...</h5>
-            <p id="action-loader-subtitle" class="text-slate-400 text-xs mt-1">Sinkronisasi data langsung dengan sistem awan.</p>
+            <h5 id="action-loader-title" class="text-white font-extrabold text-lg mt-4">Menganalisis Performa....</h5>
+            <p id="action-loader-subtitle" class="text-slate-400 text-xs mt-1">Sinkronisasi data langsung dengan sistem.</p>
         </div>
     </div>
 
@@ -333,8 +333,8 @@
                         <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
                     </svg>
                 </span>
-                <h2 id="auth-title" class="text-2xl font-black text-white">Masuk Pelari</h2>
-                <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Koneksi Real-time ke Google Spreadsheet Database Anda.</p>
+                <h2 id="auth-title" class="text-2xl font-black text-white">Siap KelarRun</h2>
+                <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Selesaikan dulu pekerjaanmu dan berlarilah bersamaku.</p>
             </div>
 
             <!-- Login Form -->
@@ -348,7 +348,7 @@
                     <input type="password" id="login-password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange">
                 </div>
                 <button type="submit" class="w-full bg-brand-orange hover:bg-brand-orange/90 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-brand-orange/20">
-                    Masuk Sekarang (Load Cloud)
+                    Masuk Sekarang
                 </button>
             </form>
 
@@ -935,6 +935,7 @@
 
         </main>
     </div>
+    
 
     <!-- MODAL: INPUT LOG LATIHAN -->
     <div id="run-log-modal" class="fixed inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden overflow-y-auto">
@@ -1166,13 +1167,13 @@
                 loginForm.classList.add('hidden');
                 registerForm.classList.remove('hidden');
                 title.innerText = "Daftar Pelari Baru";
-                subtitle.innerText = "Daftar sekali dan nikmati sinkronisasi lintas perangkat via spreadsheet.";
+                subtitle.innerText = "Daftar sekali dan nikmati hasil latihanmu bersama pelatihmu.";
                 switchBtn.innerText = "Sudah memiliki akun? Masuk di sini";
             } else {
                 loginForm.classList.remove('hidden');
                 registerForm.classList.add('hidden');
-                title.innerText = "Masuk Pelari";
-                subtitle.innerText = "Koneksi Real-time ke Google Spreadsheet Database Anda.";
+                title.innerText = "Siap KelarRun";
+                subtitle.innerText = "Selesaikan dulu pekerjaanmu dan berlarilah bersamaku.";
                 switchBtn.innerText = "Belum punya akun? Daftar sebagai pelari baru";
             }
         }
@@ -1187,7 +1188,7 @@
                 return;
             }
 
-            triggerActionLoader("Memeriksa Akun...", "AI sedang memverifikasi kredensial Anda di spreadsheet...", 1500, async () => {
+            triggerActionLoader("Memeriksa Akun...", "AI sedang memverifikasi kredensial Anda di cloud...", 1500, async () => {
                 try {
                     const response = await fetch(`${GAS_URL}?action=login&username=${encodeURIComponent(userInp)}&password=${encodeURIComponent(passInp)}`);
                     const result = await response.json();
@@ -1202,7 +1203,7 @@
                         showCustomPopup("Gagal Masuk", result.message || "Username atau Password salah!", 'error');
                     }
                 } catch (err) {
-                    showCustomPopup("Kesalahan Koneksi", "Gagal terhubung dengan server Google Sheets.", 'error');
+                    showCustomPopup("Kesalahan Koneksi", "Gagal terhubung dengan server Cloud.", 'error');
                 }
             });
         }
@@ -1218,7 +1219,7 @@
                 return;
             }
 
-            triggerActionLoader("Mendaftarkan...", "Memastikan keunikan username di database cloud...", 1800, async () => {
+            triggerActionLoader("Mendaftarkan...", "Memastikan keunikan username di database cloud...", 1500, async () => {
                 try {
                     // Cek username apakah sudah terpakai di cloud
                     const responseCheck = await fetch(`${GAS_URL}?action=checkUsername&username=${encodeURIComponent(username)}`);
@@ -1276,7 +1277,7 @@
         }
 
         function handleLogout() {
-            triggerActionLoader("Keluar Akun...", "Terima kasih atas dedikasi latihan Anda hari ini.", 1200, () => {
+            triggerActionLoader("Keluar Akun...", "Terima kasih atas usahanya dalam latihan Anda hari ini.", 1200, () => {
                 sessionStorage.removeItem("rt_active_user");
                 currentUser = null;
                 dbLogs = [];
@@ -2629,10 +2630,10 @@
             if (!currentUser) return;
 
             const reminders = [
-                `Kiat AI: Selalu lakukan pemanasan dinamis 5-10 menit demi mencegah kram otot betis.`,
-                `Kiat AI: Target mingguan Anda adalah ${currentUser.weeklyTarget} km. Bagi ke dalam beberapa hari latihan kecil.`,
-                `Kiat AI: Hidrasi merata 300ml air mineral 30 menit sebelum mulai berlari sangat penting untuk ketahanan.`,
-                `Kiat AI: Jika kelelahan atau Form di bawah -20, jadwalkan rest day penuh untuk pemulihan.`
+                `Pesan Coach: Selalu lakukan pemanasan dinamis 5-10 menit demi mencegah kram otot betis.`,
+                `Pesan Coach: Target mingguan Anda adalah ${currentUser.weeklyTarget} km. Bagi ke dalam beberapa hari latihan kecil.`,
+                `Pesan Coach: Hidrasi merata 300ml air mineral 30 menit sebelum mulai berlari sangat penting untuk ketahanan.`,
+                `Pesan Coach: Jika kelelahan atau Form di bawah -20, jadwalkan rest day penuh untuk pemulihan.`
             ];
 
             const idx = Math.floor(Math.random() * reminders.length);
@@ -2647,7 +2648,7 @@
         function toggleNotifications() {
             const badge = document.getElementById('notif-badge');
             badge.classList.add('hidden');
-            showCustomPopup("Notifikasi Sinkronisasi", "Semua log aktivitas dan rencana mingguan lari Anda telah berhasil dicadangkan ke Google Sheets.", "info");
+            showCustomPopup("Notifikasi Sinkronisasi", "Semua log aktivitas dan rencana mingguan lari Anda telah berhasil dicadangkan ke Cloud.", "info");
         }
 
         function checkOnlineStatus() {
@@ -2713,13 +2714,30 @@
         }
 
         function forceSync() {
-            triggerActionLoader("Sinkronisasi Ulang...", "AI sedang menyelaraskan data lokal dengan spreadsheet di cloud...", 1500, async () => {
+            triggerActionLoader("Sinkronisasi Ulang...", "AI sedang menyelaraskan data lokal dengan cloud....", 1500, async () => {
                 if (currentUser) {
                     await fetchUserDataFromCloud(currentUser.username, currentUser.password);
-                    showCustomPopup("Sinkronisasi Selesai", "Semua data lari & profil Anda berhasil diperbarui langsung dari cloud spreadsheet.", "success");
+                    showCustomPopup("Sinkronisasi Selesai", "Semua data lari & profil Anda berhasil diperbarui.", "success");
                 }
             });
         }
-    </script>
+function toggleTheme() {
+            const html = document.documentElement;
+            const sunIcon = document.getElementById('theme-icon-sun');
+            const moonIcon = document.getElementById('theme-icon-moon');
+
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                localStorage.setItem("rt_theme", "light");
+            } else {
+                html.classList.add('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                localStorage.setItem("rt_theme", "dark");
+            }
+        }
+</script>
 </body>
 </html>
