@@ -1,544 +1,1929 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RunTracker AI</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-:root{
-  --bg:#020617;
-  --card:#0f172a;
-  --accent:#22c55e;
-  --text:#e2e8f0;
-}
-
-*{box-sizing:border-box;}
-
-body{
-  margin:0;
-  font-family:system-ui;
-  background:linear-gradient(180deg,#020617,#020617,#020617);
-  color:var(--text);
-}
-
-.container{
-  max-width:520px;
-  margin:auto;
-  padding:16px;
-}
-
-.card{
-  background:rgba(255,255,255,0.03);
-  backdrop-filter:blur(10px);
-  border-radius:16px;
-  padding:16px;
-  margin-top:14px;
-  border:1px solid rgba(255,255,255,0.05);
-}
-
-input,button,select{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:10px;
-  border:none;
-  font-size:14px;
-}
-
-input,select{
-  background:#020617;
-  color:white;
-  border:1px solid #1e293b;
-}
-
-button{
-  background:var(--accent);
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-button:hover{opacity:.9}
-
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:10px;
-}
-
-.badge{
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:12px;
-  display:inline-block;
-}
-
-.too_high{background:#dc2626}
-.improving{background:#16a34a}
-.normal{background:#64748b}
-
-.loader{
-  position:fixed;
-  inset:0;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  background:#0008;
-  font-size:40px;
-  backdrop-filter: blur(4px);
-  z-index:9999; /* 🔥 FIX UTAMA */
-}
-
-.loader span{
-  animation:run .5s infinite alternate;
-}
-
-@keyframes run{
-  from{transform:translateX(-10px)}
-  to{transform:translateX(10px)}
-}
-
-.link{
-  text-align:center;
-  margin-top:12px;
-  font-size:14px;
-}
-
-.link span{
-  color:var(--accent);
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.link span:hover{
-  text-decoration:underline;
-  opacity:0.8;
-}
-
-@media(max-width:480px){
-  .grid{grid-template-columns:1fr}
-}
-
-.program-card{
-  background:#020617;
-  border:1px solid #1e293b;
-  border-radius:12px;
-  padding:12px;
-  margin-top:10px;
-}
-
-.program-title{
-  font-weight:bold;
-  font-size:16px;
-  margin-bottom:6px;
-}
-
-.program-meta{
-  font-size:13px;
-  opacity:.8;
-}
-</style>
-</head>
-
-<body>
-
-<div class="loader" id="loader"><span>🏃‍♂️</span></div>
-
-<div class="container">
-
-<!-- LOGIN -->
-<div id="loginCard" class="card">
-<h2>🏃 RunTracker</h2>
-
-<input id="user" placeholder="User / Email">
-<input id="password" type="password" placeholder="Password">
-
-<button onclick="login()">Login</button>
-
-<div class="link">
-Belum punya akun? <span onclick="showRegister()">Daftar</span>
-</div>
-</div>
-
-<!-- REGISTER -->
-<div id="registerCard" class="card" style="display:none;">
-<h2>Daftar</h2>
-
-<input id="r_nama" placeholder="Nama">
-<input id="r_email" placeholder="Email">
-<input id="r_password" type="password" placeholder="Password">
-<input id="r_usia" placeholder="Usia">
-<input id="r_tinggi" placeholder="Tinggi">
-<input id="r_berat" placeholder="Berat">
-
-<select id="r_tujuan">
-  <option value="">Pilih Tujuan</option>
-  <option value="endurance">Endurance</option>
-  <option value="turun_bb">Turun BB</option>
-</select>
-
-<button onclick="register()">Daftar</button>
-
-<div class="link">
-Sudah punya akun? <span onclick="showLogin()">Login</span>
-</div>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard" style="display:none">
-
-<div class="header">
-<h3>Halo, <span id="nama"></span></h3>
-<button onclick="toggleForm()">My SetorRun</button>
-</div>
-
-<div id="form" class="card" style="display:none">
-<input id="tgl" type="date">
-<input id="jarak" placeholder="Jarak (km)">
-<input id="durasi" placeholder="Durasi (menit)">
-<input id="pace" placeholder="Pace">
-<input id="hr" placeholder="HR">
-<button onclick="save()">Simpan</button>
-</div>
-
-<div class="card">
-<h3>🤖 AI Coach</h3>
-<p id="saran"></p>
-</div>
-
-<div class="card">
-<h3>📊 Progress</h3>
-<div class="grid">
-<div>HR<br><b id="avgHR">-</b></div>
-<div>Pace<br><b id="avgPace">-</b></div>
-<div>Improve<br><b id="improve">-</b></div>
-<div>Status<br><span id="status" class="badge">-</span></div>
-</div>
-</div>
-
-<div class="card">
-<h3>📈 KM / Minggu</h3>
-<canvas id="chart"></canvas>
-</div>
-
-<div class="card">
-<h3>📜 History</h3>
-<div id="history"></div>
-</div>
-
-</div>
-</div>
-
-<script>
-const API="https://script.google.com/macros/s/AKfycbyFFR0ETNNdE6UaA97a5D0caePx5Nis7Mn6emDWud2s9zHBKJQaWqs7LqA623Au6D0TgA/exec";
-let uid=null;
-let chart=null;
-
-function load(v){loader.style.display=v?"flex":"none";}
-
-// LOGIN
-async function login(){
-  load(true);
-
-  const r=await fetch(API,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"login",
-      user:user.value,
-      password:password.value
-    })
-  });
-
-  const d=await r.json();
-
-  if(d.status==="success"){
-    uid=d.user_id;
-    nama.innerText=d.nama;
-
-    loginCard.style.display="none";
-    dashboard.style.display="block";
-
-    loadDash();
-  }else alert(d.message);
-
-  load(false);
-}
-
-// REGISTER
-async function register(){
-
-  // 🔥 VALIDASI TAMBAHAN
-  if(!r_nama.value || !r_email.value || !r_password.value || !r_tujuan.value){
-    alert("Semua field wajib diisi!");
-    return;
-  }
-
-  load(true);
-
-  await fetch(API+"?action=register",{
-    method:"POST",
-    body:JSON.stringify({
-      nama:r_nama.value,
-      email:r_email.value,
-      password:r_password.value,
-      usia:r_usia.value,
-      tinggi:r_tinggi.value,
-      berat:r_berat.value,
-      tujuan:r_tujuan.value // ✅ FIX UTAMA
-    })
-  });
-
-  load(false);
-  alert("Akun berhasil dibuat & program otomatis dibuat");
-  showLogin();
-}
-
-// NAV
-function showRegister(){
-  loginCard.style.display="none";
-  registerCard.style.display="block";
-}
-
-function showLogin(){
-  registerCard.style.display="none";
-  loginCard.style.display="block";
-}
-
-// FORM
-function toggleForm(){
-  form.style.display=form.style.display=="none"?"block":"none";
-}
-
-// SAVE
-async function save(){
-  load(true);
-
-  await fetch(API,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"workout",
-      user_id:uid,
-      tanggal:tgl.value,
-      jarak:jarak.value,
-      durasi:durasi.value,
-      pace:pace.value,
-      avg_hr:hr.value
-    })
-  });
-
-  form.style.display="none";
-  loadDash();
-  load(false);
-}
-
-// DASHBOARD
-async function loadDash(){
-
-  try{
-
-    load(true);
-
-    // ================= DASHBOARD =================
-
-    const r = await fetch(API,{
-      method:"POST",
-      body:JSON.stringify({
-        action:"dashboard",
-        user_id:uid
-      })
-    });
-
-    const d = await r.json();
-
-    console.log("Dashboard:", d);
-
-    // ================= AI COACH =================
-
-    if(d.saran){
-
-      const lines = d.saran
-        .split("\n")
-        .filter(x => x.trim() !== "");
-
-      const title = lines[0] || "🏃 Program Hari Ini";
-      const content = lines.slice(1).join("<br>");
-
-      saran.innerHTML = `
-        <div class="program-card">
-
-          <div class="program-title">
-            ${title}
-          </div>
-
-          <div class="program-meta">
-            ${content}
-          </div>
-
-        </div>
-      `;
-
-    }else{
-
-      saran.innerHTML = `
-        <div class="program-card">
-
-          <div class="program-title">
-            Tidak Ada Program
-          </div>
-
-          <div class="program-meta">
-            Hari ini tidak ada jadwal latihan.
-          </div>
-
-        </div>
-      `;
-
-    }
-
-    // ================= PROGRESS =================
-
-    if(d.progress){
-
-      const p = d.progress;
-
-      avgHR.innerText =
-        Number(p.avg_hr || 0).toFixed(0);
-
-      avgPace.innerText =
-        Number(p.avg_pace || 0).toFixed(2);
-
-      improve.innerText =
-        Number(p.improvement || 0).toFixed(2);
-
-      status.innerText =
-        p.status || "-";
-
-      status.className =
-        "badge " + (p.status || "normal");
-
-    }else{
-
-      avgHR.innerText = "-";
-      avgPace.innerText = "-";
-      improve.innerText = "-";
-
-      status.innerText = "-";
-      status.className = "badge normal";
-
-    }
-
-    // ================= HISTORY =================
-
-    const h = await fetch(API,{
-      method:"POST",
-      body:JSON.stringify({
-        action:"history",
-        user_id:uid
-      })
-    });
-
-    const data = await h.json();
-
-    let historyHtml = "";
-    let weekly = {};
-
-    (data.data || []).forEach(item=>{
-
-      historyHtml += `
-        <div class="program-card" style="margin-bottom:8px">
-
-          <div class="program-title">
-            ${item.jarak} KM
-          </div>
-
-          <div class="program-meta">
-            📅 ${item.tanggal}<br>
-            ❤️ HR ${item.hr}<br>
-            ⚡ Pace ${item.pace}
-          </div>
-
-        </div>
-      `;
-
-      const weekDate = new Date(item.tanggal);
-
-      if(!isNaN(weekDate)){
-
-        const key =
-          weekDate.getFullYear() +
-          "-" +
-          weekDate.getMonth() +
-          "-" +
-          Math.ceil(weekDate.getDate()/7);
-
-        weekly[key] =
-          (weekly[key] || 0) +
-          Number(item.jarak || 0);
-
-      }
-
-    });
-
-    history.innerHTML =
-      historyHtml ||
-      "<div class='program-card'>Belum ada data lari</div>";
-
-    // ================= CHART =================
-
-    const labels = Object.keys(weekly);
-    const values = Object.values(weekly);
-
-    if(chart){
-      chart.destroy();
-    }
-
-    chart = new Chart(
-      document.getElementById("chart"),
-      {
-        type:"line",
-        data:{
-          labels:labels,
-          datasets:[{
-            label:"KM / Minggu",
-            data:values,
-            tension:0.4,
-            fill:false
-          }]
-        },
-        options:{
-          responsive:true,
-          maintainAspectRatio:false
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Tracker for Newbie - AI Running Coach</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#FF5722',
+                            volt: '#ADFF2F',
+                            dark: '#0B0F19',
+                            card: '#151D30',
+                            cardLight: '#FFFFFF',
+                            border: '#1E293B'
+                        }
+                    }
+                }
+            }
         }
-      }
-    );
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- PapaParse CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0B0F19;
+            transition: background-color 0.3s ease;
+        }
+        /* Stadium track animation for loader */
+        .track-loop {
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            animation: dash 2.5s linear infinite;
+        }
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        .runner-anim {
+            animation: bounce 0.6s infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen dark:bg-brand-dark bg-slate-50 dark:text-slate-100 text-slate-800 transition-colors duration-300">
 
-  }catch(err){
+    <!-- SPLASH / LOADING SCREEN -->
+    <div id="loading-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-content-center bg-brand-dark transition-opacity duration-500">
+        <div class="m-auto flex flex-col items-center">
+            <div class="relative w-48 h-48 flex items-center justify-center">
+                <svg class="absolute w-full h-full" viewBox="0 0 100 100">
+                    <rect x="10" y="10" width="80" height="80" rx="40" fill="none" stroke="#1E293B" stroke-width="4"/>
+                    <rect class="track-loop" x="10" y="10" width="80" height="80" rx="40" fill="none" stroke="#FF5722" stroke-width="4"/>
+                </svg>
+                <svg class="w-16 h-16 text-brand-volt runner-anim fill-current" viewBox="0 0 24 24">
+                    <path d="M21.5,9C20.1,9 18.2,9.7 16.5,10.6L14,8H9V10H12.2L14.7,12.5C13.2,13.4 11.2,14 9,14C6.2,14 3.7,12.8 2,11L1,12C3,14.5 6,16 9,16C11.8,16 14.3,15.1 16.2,13.6L19,16.4V19H21V15L18.5,12.5C20,11.5 21.3,10.2 21.8,9.5L21.5,9M9,5A2,2 0 0,0 7,7A2,2 0 0,0 9,9A2,2 0 0,0 11,7A2,2 0 0,0 9,5Z"/>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-black mt-6 tracking-wider text-white">RUN TRACKER</h1>
+            <p class="text-brand-volt text-xs font-bold tracking-widest mt-2 uppercase">AI Running Coach By KelarRun Community</p>
+            <p class="text-slate-400 text-sm mt-8 animate-pulse" id="loading-status">Mempersiapkan Rencana Latihan Anda....</p>
+        </div>
+    </div>
 
-    console.error(err);
+    <!-- AUTHENTICATION GATE (LOGIN & REGISTER SCREEN) -->
+    <div id="auth-gate" class="fixed inset-0 z-40 flex items-center justify-center bg-brand-dark p-4">
+        <div class="w-full max-w-md bg-slate-900 border border-brand-border rounded-2xl p-8 space-y-6 shadow-2xl">
+            <div class="text-center">
+                <span class="inline-block p-3 bg-brand-orange text-white rounded-2xl mb-3">
+                    <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24">
+                        <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
+                    </svg>
+                </span>
+                <h2 id="auth-title" class="text-2xl font-black text-white">SIAP KELARRUN</h2>
+                <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Gunakan kredensial Anda untuk masuk ke dashboard pribadi.</p>
+            </div>
 
-    alert(
-      "Error Dashboard : " +
-      err.message
-    );
+            <!-- Login Form -->
+            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Username</label>
+                    <input type="text" id="login-username" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Password</label>
+                    <input type="password" id="login-password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                </div>
+                <button type="submit" class="w-full bg-brand-orange hover:bg-brand-orange/90 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-brand-orange/20">
+                    Masuk Sekarang
+                </button>
+            </form>
 
-  }finally{
+            <!-- Register Form (Hidden by default) -->
+            <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nama Lengkap</label>
+                    <input type="text" id="reg-name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Username Unik</label>
+                    <input type="text" id="reg-username" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Password</label>
+                    <input type="password" id="reg-password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                </div>
+                <button type="submit" class="w-full bg-brand-volt hover:bg-brand-volt/90 text-slate-950 font-black py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-brand-volt/10">
+                    Daftar Akun Baru
+                </button>
+            </form>
 
-    load(false);
+            <!-- Switch auth state button -->
+            <div class="text-center pt-2">
+                <button id="auth-switch-btn" onclick="toggleAuthMode()" class="text-xs text-brand-orange font-bold hover:underline">
+                    Belum punya akun? Daftar sebagai pelari baru
+                </button>
+            </div>
+        </div>
+    </div>
 
-  }
+    <!-- MAIN APP STRUCTURE (Hidden until Login) -->
+    <div id="main-app" class="flex h-screen overflow-hidden hidden">
+        
+        <!-- SIDEBAR - Desktop / Tablet -->
+        <aside class="hidden md:flex flex-col w-64 bg-slate-900 dark:bg-brand-card border-r border-slate-200 dark:border-brand-border h-full flex-shrink-0">
+            <div class="p-6 flex items-center space-x-3">
+                <span class="p-2 bg-brand-orange text-white rounded-xl">
+                    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                        <path d="M13.5,5.5A1.5,1.5 0 0,1 15,7A1.5,1.5 0 0,1 13.5,8.5A1.5,1.5 0 0,1 12,7A1.5,1.5 0 0,1 13.5,5.5M19.5,9.5H17V12H15V8.5L13.1,6.6C12.7,6.2 12,6.2 11.6,6.6L7,11.2V17H9V13L11,11V19H13V15.5L15.6,13L19.5,16.9V19H21.5V14.5L19.5,12.5V9.5Z"/>
+                    </svg>
+                </span>
+                <div>
+                    <h2 class="font-extrabold tracking-tight text-slate-100">RUN TRACKER</h2>
+                    <p class="text-brand-volt text-[10px] font-bold tracking-widest">AI COACH PRO</p>
+                </div>
+            </div>
 
-}
-</script>
+            <!-- ACTIVE PROFILE CARD (Isolasi Privasi) -->
+            <div class="px-6 py-4 border-b border-slate-800 bg-slate-950/40">
+                <span class="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">Pelari Aktif</span>
+                <p id="active-profile-name" class="font-black text-lg text-white mt-0.5">Rian Pratama</p>
+                <p id="active-profile-username" class="text-xs text-brand-volt font-medium">@rian_pratama</p>
+                <button onclick="handleLogout()" class="mt-3 flex items-center justify-center space-x-2 w-full py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold rounded-lg transition-all">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span>Keluar Akun (Logout)</span>
+                </button>
+            </div>
 
+            <!-- NAVIGATION LINKS -->
+            <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+                <button onclick="navigate('dashboard')" class="nav-btn active flex items-center w-full space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors text-slate-400 hover:text-white hover:bg-slate-800 dark:hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="navigate('profile')" class="nav-btn flex items-center w-full space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors text-slate-400 hover:text-white hover:bg-slate-800 dark:hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span>Runner Profile</span>
+                </button>
+                <button onclick="navigate('coach')" class="nav-btn flex items-center w-full space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors text-slate-400 hover:text-white hover:bg-slate-800 dark:hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <span>AI Training Plan</span>
+                </button>
+                <button onclick="navigate('analytics')" class="nav-btn flex items-center w-full space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors text-slate-400 hover:text-white hover:bg-slate-800 dark:hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <span>Analytics & Load</span>
+                </button>
+                <button onclick="navigate('chat')" class="nav-btn flex items-center w-full space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors text-slate-400 hover:text-white hover:bg-slate-800 dark:hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <span>Coach Chat AI</span>
+                </button>
+            </nav>
+
+            <!-- FOOTER STATUS -->
+            <div class="p-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                <span class="flex items-center">
+                    <span id="sync-indicator-dot" class="w-2.5 h-2.5 bg-green-500 rounded-full inline-block mr-2 animate-pulse"></span>
+                    <span id="sync-indicator-text">Online</span>
+                </span>
+                <button onclick="forceSync()" class="hover:text-brand-volt">
+                    <svg class="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17"></path></svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTAINER UTAMA -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-950 dark:bg-slate-950 bg-slate-100 text-slate-800 dark:text-slate-100">
+            
+            <!-- TOP BAR -->
+            <header class="flex items-center justify-between px-6 py-4 dark:bg-brand-card bg-white border-b border-slate-200 dark:border-brand-border h-16 flex-shrink-0 z-10">
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileSidebar()" class="text-slate-500 dark:text-slate-300 mr-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <span class="font-black tracking-wider text-brand-orange text-lg">RUNTRACKER</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-2">
+                    <h1 id="page-title" class="text-xl font-extrabold tracking-tight">Dashboard</h1>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative cursor-pointer" onclick="toggleNotifications()">
+                        <svg class="w-6 h-6 text-slate-400 hover:text-slate-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span id="notif-badge" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-brand-orange rounded-full hidden"></span>
+                    </div>
+
+                    <button onclick="toggleTheme()" class="p-2 text-slate-400 hover:text-slate-100 rounded-lg">
+                        <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M14 12a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    
+                    <div class="flex items-center space-x-1 py-1.5 px-3 bg-brand-volt/10 text-brand-volt text-xs font-bold rounded-full">
+                        <span id="badge-user-name">Guest</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- REMINDER ALERTS CONTAINER -->
+            <div id="reminder-container" class="hidden px-6 py-2 bg-brand-orange/10 border-b border-brand-orange/20 text-brand-orange text-xs font-semibold flex items-center justify-between">
+                <span id="reminder-text">Daily Tip: Recovery is key! Don't forget to measure weight.</span>
+                <button onclick="closeReminder()" class="text-slate-400 hover:text-slate-100">✕</button>
+            </div>
+
+            <!-- MAIN WORKSPACE -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-6" id="workspace">
+                
+                <!-- SECTION: DASHBOARD -->
+                <section id="view-dashboard" class="space-y-6">
+                    <!-- Quick Metrics Row -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="dark:bg-brand-card bg-white p-5 rounded-2xl border dark:border-brand-border border-slate-200">
+                            <p class="text-xs text-slate-400 font-semibold uppercase">Total Runs</p>
+                            <h3 id="stat-total-runs" class="text-2xl font-black mt-1">0</h3>
+                            <span class="text-slate-500 text-[10px]">Seluruh riwayat latihan</span>
+                        </div>
+                        <div class="dark:bg-brand-card bg-white p-5 rounded-2xl border dark:border-brand-border border-slate-200">
+                            <p class="text-xs text-slate-400 font-semibold uppercase">Jarak Tempuh</p>
+                            <h3 id="stat-total-dist" class="text-2xl font-black mt-1">0.0 <span class="text-sm font-medium">km</span></h3>
+                            <span class="text-slate-500 text-[10px]">Aktivitas kumulatif</span>
+                        </div>
+                        <div class="dark:bg-brand-card bg-white p-5 rounded-2xl border dark:border-brand-border border-slate-200">
+                            <p class="text-xs text-slate-400 font-semibold uppercase">Rata-rata Pace</p>
+                            <h3 id="stat-avg-pace" class="text-2xl font-black mt-1">0:00 <span class="text-sm font-medium">/km</span></h3>
+                            <span class="text-slate-500 text-[10px]">Efisiensi lari</span>
+                        </div>
+                        <div class="dark:bg-brand-card bg-white p-5 rounded-2xl border dark:border-brand-border border-slate-200">
+                            <p class="text-xs text-slate-400 font-semibold uppercase">Estimasi VO2Max</p>
+                            <div class="flex items-baseline space-x-2">
+                                <h3 id="stat-vo2max" class="text-2xl font-black mt-1">--</h3>
+                                <span id="stat-vo2max-cat" class="text-[10px] bg-brand-volt/20 text-brand-volt px-2 py-0.5 rounded-full font-bold">Newbie</span>
+                            </div>
+                            <span class="text-slate-500 text-[10px]" id="stat-vo2max-trend">Analisis kapasitas</span>
+                        </div>
+                    </div>
+
+                    <!-- Layout: Left Column (Activity & Plan), Right Column (HR Zones & Weight) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Training Plan Card -->
+                            <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div>
+                                        <h4 class="text-lg font-extrabold">Rencana Latihan Minggu Ini</h4>
+                                        <p class="text-xs text-slate-400" id="plan-goal-text">Tujuan: Menjaga Kebugaran</p>
+                                    </div>
+                                    <button onclick="navigate('coach')" class="text-brand-orange hover:text-brand-orange/80 text-xs font-bold">Lihat Semua →</button>
+                                </div>
+                                <div id="dashboard-weekly-plan" class="space-y-3">
+                                    <!-- Populated programmatically based on objectives -->
+                                </div>
+                            </div>
+
+                            <!-- Interactive Dashboard Chart Card -->
+                            <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                                    <div>
+                                        <h4 class="text-lg font-extrabold">Tren Aktivitas</h4>
+                                        <p class="text-xs text-slate-400">Gunakan filter untuk mengubah visualisasi</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 bg-slate-900 p-1 rounded-xl">
+                                        <button onclick="updateChartFilter('daily')" class="chart-filter-btn active text-xs font-bold px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">Hari</button>
+                                        <button onclick="updateChartFilter('weekly')" class="chart-filter-btn text-xs font-bold px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">Minggu</button>
+                                        <button onclick="updateChartFilter('monthly')" class="chart-filter-btn text-xs font-bold px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">Bulan</button>
+                                    </div>
+                                </div>
+                                <div class="relative h-72">
+                                    <canvas id="dashboardChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column (HR Zones & Fast Actions) -->
+                        <div class="space-y-6">
+                            <!-- Training Load Gauge -->
+                            <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200">
+                                <h4 class="text-lg font-extrabold mb-2">Training Load & Form</h4>
+                                <div class="grid grid-cols-3 gap-2 text-center my-4">
+                                    <div class="p-2 bg-slate-900 rounded-xl">
+                                        <span class="text-[10px] text-slate-400 uppercase">Fitness</span>
+                                        <p id="load-fitness" class="text-xl font-black mt-1 text-green-400">0</p>
+                                    </div>
+                                    <div class="p-2 bg-slate-900 rounded-xl">
+                                        <span class="text-[10px] text-slate-400 uppercase">Fatigue</span>
+                                        <p id="load-fatigue" class="text-xl font-black mt-1 text-red-400">0</p>
+                                    </div>
+                                    <div class="p-2 bg-slate-900 rounded-xl">
+                                        <span class="text-[10px] text-slate-400 uppercase">Form</span>
+                                        <p id="load-form" class="text-xl font-black mt-1 text-brand-volt">0</p>
+                                    </div>
+                                </div>
+                                <p id="load-status-msg" class="text-xs text-slate-400 leading-relaxed italic">"Muat beberapa sesi latihan untuk melihat analitik beban latihan akut dan kronis Anda."</p>
+                            </div>
+
+                            <!-- Heart Rate Zones Visual -->
+                            <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-extrabold">Zona Detak Jantung</h4>
+                                    <span id="dashboard-maxhr" class="text-xs font-black text-brand-orange">Max: -- BPM</span>
+                                </div>
+                                <div class="space-y-3" id="hr-zones-container">
+                                    <!-- Zones populated by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Quick Import/Export Actions -->
+                            <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200 space-y-3">
+                                <h4 class="text-md font-extrabold">Alat & Ekspor</h4>
+                                <button onclick="exportToCSV()" class="w-full flex items-center justify-center space-x-2 py-2 px-4 bg-slate-900 hover:bg-slate-800 text-slate-200 rounded-xl text-sm font-bold transition-all border border-slate-800">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    <span>Export CSV (PapaParse)</span>
+                                </button>
+                                <button onclick="exportToPDF()" class="w-full flex items-center justify-center space-x-2 py-2 px-4 bg-brand-orange hover:bg-brand-orange/80 text-white rounded-xl text-sm font-bold transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span>Export Laporan PDF (jsPDF)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- SECTION: PROFILE -->
+                <section id="view-profile" class="space-y-6 hidden">
+                    <div class="max-w-3xl mx-auto dark:bg-brand-card bg-white p-8 rounded-2xl border dark:border-brand-border border-slate-200">
+                        <h3 class="text-2xl font-black mb-6">Profil & Analisis Awal Pelari</h3>
+                        
+                        <form id="profile-form" onsubmit="saveProfile(event)" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Nama Lengkap</label>
+                                    <input type="text" id="prof-name" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Tanggal Lahir</label>
+                                    <input type="date" id="prof-dob" required onchange="calculateAgeAutomatic()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Jenis Kelamin</label>
+                                    <select id="prof-gender" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                        <option value="Male">Pria</option>
+                                        <option value="Female">Wanita</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Tujuan Latihan</label>
+                                    <select id="prof-goal" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                        <option value="Menurunkan Berat Badan">Menurunkan Berat Badan</option>
+                                        <option value="Meningkatkan Endurance">Meningkatkan Endurance</option>
+                                        <option value="5K Finisher">5K Finisher</option>
+                                        <option value="10K Finisher">10K Finisher</option>
+                                        <option value="Half Marathon">Half Marathon</option>
+                                        <option value="Marathon">Marathon</option>
+                                        <option value="Menurunkan Pace">Menurunkan Pace</option>
+                                        <option value="Menjaga Kebugaran">Menjaga Kebugaran</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Tinggi Badan (cm)</label>
+                                    <input type="number" id="prof-height" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Berat Badan Sekarang (kg)</label>
+                                    <input type="number" id="prof-weight" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Target Berat Badan (kg)</label>
+                                    <input type="number" id="prof-target-weight" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Pengalaman Lari</label>
+                                    <select id="prof-exp" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                        <option value="Beginner">Pemula Sekali (0 - 6 Bulan)</option>
+                                        <option value="Intermediate">Intermediate (6 Bulan - 2 Tahun)</option>
+                                        <option value="Advanced">Advanced (Di atas 2 Tahun)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Resting Heart Rate (BPM)</label>
+                                    <input type="number" id="prof-rhr" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Max Heart Rate (BPM) <span class="text-[10px] text-slate-400 font-normal">(Opsional)</span></label>
+                                    <input type="number" id="prof-mhr" placeholder="Otomatis dihitung jika kosong" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Cedera Sebelumnya</label>
+                                    <input type="text" id="prof-injury" placeholder="Contoh: Lutut, Shin Splint, tidak ada" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Penyakit Penyerta</label>
+                                    <input type="text" id="prof-comorbid" placeholder="Contoh: Asma, Hipertensi, tidak ada" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                                </div>
+                            </div>
+
+                            <!-- Diagnostic calculations dynamic view -->
+                            <div class="p-6 bg-slate-900 rounded-2xl border border-brand-border space-y-3">
+                                <h4 class="font-bold text-brand-volt">Hasil Analisis Otomatis</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                                    <div>
+                                        <span class="text-slate-400 block">Umur</span>
+                                        <strong id="auto-age" class="text-base text-white">-- Tahun</strong>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 block">BMI & Status</span>
+                                        <strong id="auto-bmi" class="text-base text-white">--</strong>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 block">VO2Max Estimasi</span>
+                                        <strong id="auto-vo2max" class="text-base text-white">--</strong>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 block">Target Mingguan</span>
+                                        <strong id="auto-weekly-target" class="text-base text-white">-- km</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end space-x-4">
+                                <button type="submit" class="bg-brand-orange hover:bg-brand-orange/80 text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-brand-orange/20">Simpan Profil & Buat Jadwal</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- SECTION: AI COACH TRAINING PLAN -->
+                <section id="view-coach" class="space-y-6 hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-2xl font-black">Program Latihan Pribadi Anda</h3>
+                            <p class="text-sm text-slate-400" id="coach-goal-subtitle">Dibuat khusus oleh AI Coach berdasarkan profil Anda.</p>
+                        </div>
+                        <span class="bg-brand-volt/10 text-brand-volt text-xs font-bold px-3 py-1.5 rounded-full">AI Coach Verified</span>
+                    </div>
+
+                    <!-- Training Sessions Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="coach-sessions-grid">
+                        <!-- Dynamic sessions generated from JavaScript -->
+                    </div>
+                </section>
+
+                <!-- SECTION: ANALYTICS & LOAD -->
+                <section id="view-analytics" class="space-y-6 hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-2xl font-black font-sport">Analisis Beban Latihan Kronis</h3>
+                            <p class="text-sm text-slate-400">Metrik Form, Fatigue, dan Fitness Berdasarkan RPE & Durasi</p>
+                        </div>
+                    </div>
+
+                    <!-- Load Chart Card -->
+                    <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200">
+                        <h4 class="text-lg font-extrabold mb-4">Grafik Beban Latihan (ATL / CTL / Form)</h4>
+                        <div class="relative h-96">
+                            <canvas id="loadTrendsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Multi Trend Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200">
+                            <h4 class="text-lg font-extrabold mb-4">Tren Pace vs Detak Jantung</h4>
+                            <div class="relative h-72">
+                                <canvas id="paceHrChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200">
+                            <h4 class="text-lg font-extrabold mb-4">Tren Perubahan Berat Badan & VO2Max</h4>
+                            <div class="relative h-72">
+                                <canvas id="weightVo2Chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: COACH CHAT AI -->
+                <section id="view-chat" class="flex flex-col h-[calc(100vh-14rem)] bg-slate-900 dark:bg-brand-card rounded-2xl border dark:border-brand-border border-slate-200 overflow-hidden hidden">
+                    <div class="p-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="p-2 bg-brand-volt/10 text-brand-volt rounded-xl">
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4M12,18C8.69,18 6,15.31 6,12C6,10.09 6.9,8.39 8.3,7.3L9.7,8.7C8.65,9.45 8,10.65 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12C16,10.65 15.35,9.45 14.3,8.7L15.7,7.3C17.1,8.39 18,10.09 18,12C18,15.31 15.31,18 12,18Z"/></svg>
+                            </span>
+                            <div>
+                                <h4 class="font-extrabold">Asisten AI Coach Lari</h4>
+                                <p class="text-[10px] text-brand-volt font-semibold">Aktif • Topik Khusus Lari & Nutrisi</p>
+                            </div>
+                        </div>
+                        <button onclick="clearChatHistory()" class="text-xs text-slate-400 hover:text-white">Clear Chat</button>
+                    </div>
+
+                    <div id="chat-messages-container" class="flex-1 p-6 overflow-y-auto space-y-4">
+                        <!-- Populated dynamic -->
+                    </div>
+
+                    <form onsubmit="sendCoachMessage(event)" class="p-4 border-t border-slate-800 bg-slate-950 flex space-x-3">
+                        <input type="text" id="chat-input-field" placeholder="Tanyakan tentang Pace, VO2max, Menu Nutrisi, program latihan..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange">
+                        <button type="submit" class="bg-brand-orange hover:bg-brand-orange/80 text-white font-bold px-6 rounded-xl text-sm transition-all">Kirim</button>
+                    </form>
+                </section>
+
+            </div>
+
+            <!-- MOBILE BOTTOM BAR -->
+            <footer class="md:hidden grid grid-cols-5 gap-1 py-2 px-1 dark:bg-brand-card bg-white border-t border-slate-200 dark:border-brand-border flex-shrink-0 z-10">
+                <button onclick="navigate('dashboard')" class="mobile-nav-btn flex flex-col items-center text-brand-orange justify-center text-[10px] font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
+                    <span>Home</span>
+                </button>
+                <button onclick="navigate('profile')" class="mobile-nav-btn flex flex-col items-center text-slate-400 justify-center text-[10px] font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span>Profil</span>
+                </button>
+                <button onclick="navigate('coach')" class="mobile-nav-btn flex flex-col items-center text-slate-400 justify-center text-[10px] font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <span>Latihan</span>
+                </button>
+                <button onclick="navigate('analytics')" class="mobile-nav-btn flex flex-col items-center text-slate-400 justify-center text-[10px] font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <span>Grafik</span>
+                </button>
+                <button onclick="navigate('chat')" class="mobile-nav-btn flex flex-col items-center text-slate-400 justify-center text-[10px] font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <span>Coach AI</span>
+                </button>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- MODAL: INPUT LOG LATIHAN -->
+    <div id="run-log-modal" class="fixed inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden overflow-y-auto">
+        <div class="bg-slate-900 border border-brand-border p-6 rounded-2xl w-full max-w-lg mx-4 my-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h4 id="log-modal-title" class="text-xl font-bold">Input Hasil Latihan</h4>
+                <button onclick="closeRunLogModal()" class="text-slate-400 hover:text-white">✕</button>
+            </div>
+            
+            <form id="run-log-form" onsubmit="saveRunLog(event)" class="space-y-4">
+                <input type="hidden" id="log-session-index">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Tanggal</label>
+                        <input type="date" id="log-date" required class="w-full bg-slate-850 border border-slate-800 rounded-lg py-2 px-3 text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Jarak (km)</label>
+                        <input type="number" step="0.01" id="log-distance" required class="w-full bg-slate-850 border border-slate-800 rounded-lg py-2 px-3 text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Durasi (HH:MM:SS)</label>
+                        <input type="text" id="log-duration" placeholder="00:30:00" required class="w-full bg-slate-850 border border-slate-800 rounded-lg py-2 px-3 text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Average Heart Rate</label>
+                        <input type="number" id="log-avghr" required class="w-full bg-slate-850 border border-slate-800 rounded-lg py-2 px-3 text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Max Heart Rate</label>
+                        <input type="number" id="log-maxhr" required class="w-full bg-slate-850 border border-slate-800 rounded-lg py-2 px-3 text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Cadence (SPM)</label>
+                        <input type="number" id="log-cadence" placeholder="170" class="w-full bg-slate-850 border border-slate-800 rounded-lg py-2 px-3 text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Elevation Gain (m)</label>
+                        <input type="number" id="log-elevation" placeholder="25" class="w-full bg-slate-850 border border-slate-800 rounded-lg py-2 px-3 text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">RPE (Skala Lelah 1-10)</label>
+                        <select id="log-rpe" required class="w-full bg-slate-850 border border-slate-800 rounded-lg py-2 px-3 text-slate-100 text-sm">
+                            <option value="1">1 - Sangat Ringan</option>
+                            <option value="2">2 - Ringan</option>
+                            <option value="3">3 - Cukup Ringan</option>
+                            <option value="4">4 - Sedang</option>
+                            <option value="5">5 - Sedikit Lelah</option>
+                            <option value="6">6 - Lelah</option>
+                            <option value="7">7 - Sangat Lelah</option>
+                            <option value="8">8 - Berat Sekali</option>
+                            <option value="9">9 - Hampir Maksimal</option>
+                            <option value="10">10 - Maksimal Mutlak</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Unggah Foto Latihan (Opsional)</label>
+                    <input type="file" id="log-photo" accept="image/*" class="w-full bg-slate-850 border border-slate-800 rounded-lg py-1.5 px-3 text-slate-100 text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Catatan Latihan</label>
+                    <textarea id="log-notes" rows="2" placeholder="Bagaimana rasanya lari hari ini?" class="w-full bg-slate-850 border border-slate-800 rounded-lg py-2 px-3 text-slate-100 text-sm"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+                    <button type="button" onclick="closeRunLogModal()" class="px-4 py-2 text-sm text-slate-400 hover:text-white">Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm bg-brand-orange text-white rounded-lg font-bold">Simpan Sesi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: DETAILED COACH EVALUATION FOR SESSIONS -->
+    <div id="eval-modal" class="fixed inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-brand-border p-6 rounded-2xl w-full max-w-md mx-4">
+            <div class="flex items-center space-x-3 text-brand-orange mb-4">
+                <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2M12 20A8 8 0 1 1 20 12A8 8 0 0 1 12 20M11 15H13V17H11V15M11 7H13V13H11V7"/></svg>
+                <h4 class="text-xl font-bold">Umpan Balik AI Coach</h4>
+            </div>
+            <div id="eval-modal-content" class="text-sm text-slate-200 leading-relaxed space-y-3">
+                <!-- Programmatically evaluated -->
+            </div>
+            <div class="flex justify-end mt-6">
+                <button onclick="closeEvalModal()" class="bg-brand-orange text-white font-bold px-6 py-2 rounded-xl text-sm transition-all">Selesai</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS LOGIC CONTAINER -->
+    <script>
+        // GOOGLE APPS SCRIPT WEB APP INTEGRATION URL
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxax7yZXKOs6rdu9SMMWDihDrDYO-FpTaOkI_6GdmlSBPOIFOIBmHyu1sULiT5L1055bQ/exec";
+
+        // Global State
+        let users = [];
+        let currentUser = null;
+        let dbLogs = [];
+        let chartInstance = null;
+        let activeChartFilter = 'daily';
+        let currentView = 'dashboard';
+        let syncQueue = [];
+        let isRegisterMode = false;
+
+        // Default Admin / Demo Account
+        const defaultUsers = [
+            {
+                id: "usr-9981-a",
+                name: "Rian Pratama",
+                username: "rian",
+                password: "123", // Default credential
+                dob: "1995-05-12",
+                gender: "Male",
+                height: 175,
+                weight: 80,
+                targetWeight: 72,
+                experience: "Beginner",
+                injury: "tidak ada",
+                comorbid: "tidak ada",
+                rhr: 68,
+                mhr: 185,
+                goal: "Menurunkan Berat Badan",
+                age: 31,
+                bmi: 26.1,
+                bmiStatus: "Kelebihan Berat Badan",
+                targetBmi: 23.5,
+                vo2max: 41.7,
+                weeklyTarget: 15
+            }
+        ];
+
+        const defaultLogs = [
+            {
+                id: "log-1",
+                userId: "usr-9981-a",
+                date: "2026-06-15",
+                distance: 3.20,
+                duration: "00:24:12",
+                avgPace: "7:34",
+                avgHr: 145,
+                maxHr: 160,
+                cadence: 162,
+                calories: 280,
+                elevation: 12,
+                rpe: 4,
+                notes: "Hari pertama latihan. Kaki terasa sedikit kaku tapi nafas aman.",
+                evaluation: "Sesi yang bagus! Detak jantung Anda sebagian besar berada di Zona 2 (Aerobik). Sangat optimal untuk pembakaran lemak. Pertahankan konsistensi ini."
+            }
+        ];
+
+        // Bootstrapping
+        window.onload = function() {
+            initApp();
+        };
+
+        function initApp() {
+            // Load from LocalStorage
+            const storedUsers = localStorage.getItem("rt_users");
+            const storedLogs = localStorage.getItem("rt_logs");
+            const storedTheme = localStorage.getItem("rt_theme") || "dark";
+            const storedSessionUser = sessionStorage.getItem("rt_active_user");
+
+            if (storedUsers) {
+                users = JSON.parse(storedUsers);
+            } else {
+                users = defaultUsers;
+                localStorage.setItem("rt_users", JSON.stringify(users));
+            }
+
+            if (storedLogs) {
+                dbLogs = JSON.parse(storedLogs);
+            } else {
+                dbLogs = defaultLogs;
+                localStorage.setItem("rt_logs", JSON.stringify(dbLogs));
+            }
+
+            // Sync queue load
+            const storedQueue = localStorage.getItem("rt_sync_queue");
+            if (storedQueue) {
+                syncQueue = JSON.parse(storedQueue);
+            }
+
+            // Theme Setup
+            if (storedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon-sun').classList.remove('hidden');
+                document.getElementById('theme-icon-moon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon-sun').classList.add('hidden');
+                document.getElementById('theme-icon-moon').classList.remove('hidden');
+            }
+
+            // Check if user is already logged in for this browser session
+            if (storedSessionUser) {
+                const userObj = JSON.parse(storedSessionUser);
+                // Re-verify against latest localStorage copy
+                const latestUser = users.find(u => u.id === userObj.id);
+                if (latestUser) {
+                    currentUser = latestUser;
+                    enterApp();
+                } else {
+                    showAuthGate();
+                }
+            } else {
+                showAuthGate();
+            }
+
+            // Try Sync Offline Data
+            checkOnlineStatus();
+            window.addEventListener('online', checkOnlineStatus);
+            window.addEventListener('offline', checkOnlineStatus);
+
+            // Hide Loading Screen
+            setTimeout(() => {
+                const loader = document.getElementById("loading-screen");
+                loader.classList.add("opacity-0");
+                setTimeout(() => loader.classList.add("hidden"), 500);
+            }, 1200);
+        }
+
+        // AUTHENTICATION FLOW
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+            const switchBtn = document.getElementById('auth-switch-btn');
+
+            if (isRegisterMode) {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                title.innerText = "Daftar Pelari Baru";
+                subtitle.innerText = "Buat kredensial Anda untuk memulai program latihan terisolasi.";
+                switchBtn.innerText = "Sudah memiliki akun? Masuk di sini";
+            } else {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                title.innerText = "Masuk Pelari";
+                subtitle.innerText = "Gunakan kredensial Anda untuk masuk ke dashboard pribadi.";
+                switchBtn.innerText = "Belum punya akun? Daftar sebagai pelari baru";
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const userInp = document.getElementById('login-username').value.trim().toLowerCase();
+            const passInp = document.getElementById('login-password').value;
+
+            const matchedUser = users.find(u => u.username === userInp && u.password === passInp);
+
+            if (matchedUser) {
+                currentUser = matchedUser;
+                sessionStorage.setItem("rt_active_user", JSON.stringify(currentUser));
+                enterApp();
+            } else {
+                alert("Username atau Password salah! Silakan coba lagi.");
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value.trim();
+            const username = document.getElementById('reg-username').value.trim().toLowerCase();
+            const password = document.getElementById('reg-password').value;
+
+            // Check availability
+            const isTaken = users.some(u => u.username === username);
+            if (isTaken) {
+                alert("Username sudah digunakan! Silakan pilih username yang lain.");
+                return;
+            }
+
+            const newId = "usr-" + Math.floor(1000 + Math.random() * 9000) + "-b";
+            const newUserObj = {
+                id: newId,
+                name: name,
+                username: username,
+                password: password,
+                dob: "1998-01-01",
+                gender: "Male",
+                height: 170,
+                weight: 70,
+                targetWeight: 65,
+                experience: "Beginner",
+                injury: "tidak ada",
+                comorbid: "tidak ada",
+                rhr: 70,
+                mhr: 185,
+                goal: "Menjaga Kebugaran",
+                age: 28,
+                bmi: 24.2,
+                bmiStatus: "Normal",
+                targetBmi: 22.4,
+                vo2max: 38.0,
+                weeklyTarget: 10
+            };
+
+            users.push(newUserObj);
+            localStorage.setItem("rt_users", JSON.stringify(users));
+            
+            // Queue sync to Google Sheets
+            enqueueSync('USERS', newUserObj);
+
+            currentUser = newUserObj;
+            sessionStorage.setItem("rt_active_user", JSON.stringify(currentUser));
+            
+            alert(`Registrasi Berhasil! Selamat datang ${name}. Silakan lengkapi profil biodata Anda.`);
+            
+            // Auto setup UI & jump to Profile view
+            enterApp();
+            navigate('profile');
+
+            // Reset register fields
+            document.getElementById('reg-name').value = '';
+            document.getElementById('reg-username').value = '';
+            document.getElementById('reg-password').value = '';
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem("rt_active_user");
+            currentUser = null;
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('auth-gate').classList.remove('hidden');
+            
+            // Reset fields
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+        }
+
+        function showAuthGate() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('auth-gate').classList.remove('hidden');
+        }
+
+        function enterApp() {
+            document.getElementById('auth-gate').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+
+            // Update user visuals on sidebar & widgets
+            document.getElementById('active-profile-name').innerText = currentUser.name;
+            document.getElementById('active-profile-username').innerText = `@${currentUser.username}`;
+            document.getElementById('badge-user-name').innerText = currentUser.name;
+
+            updateCurrentUserDashboard();
+            initializeCharts();
+            setupReminders();
+        }
+
+        // NAVIGATION SYSTEM
+        function navigate(viewId) {
+            currentView = viewId;
+            const sections = ['dashboard', 'profile', 'coach', 'analytics', 'chat'];
+            sections.forEach(s => {
+                const el = document.getElementById(`view-${s}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+
+            // Set Active Menu CSS
+            const btns = document.querySelectorAll('.nav-btn');
+            btns.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(viewId)) {
+                    btn.classList.add('text-brand-orange', 'bg-slate-800');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    btn.classList.remove('text-brand-orange', 'bg-slate-800');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+
+            // Page Title Update
+            const titles = {
+                dashboard: 'Dashboard',
+                profile: 'Runner Profile & Bio-metrics',
+                coach: 'AI Personal Training Plan',
+                analytics: 'Performance & Training Load Analysis',
+                chat: 'AI Running Coach Chat'
+            };
+            document.getElementById('page-title').innerText = titles[viewId] || 'Dashboard';
+
+            if (viewId === 'dashboard' || viewId === 'analytics') {
+                setTimeout(initializeCharts, 100);
+            }
+
+            if (viewId === 'profile') {
+                populateProfileForm();
+            }
+
+            if (viewId === 'coach') {
+                renderWeeklyTrainingPlan();
+            }
+
+            if (viewId === 'chat') {
+                renderChatHistory();
+            }
+
+            // Close Mobile Sidebar
+            const mobileSidebar = document.querySelector('aside');
+            if (mobileSidebar && window.innerWidth < 768) {
+                mobileSidebar.classList.add('hidden');
+            }
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector('aside');
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.add('fixed', 'inset-y-0', 'left-0', 'z-30', 'w-64');
+        }
+
+        // PROFILE & BIO-METRIC CALCULATIONS
+        function calculateAgeAutomatic() {
+            const dobInput = document.getElementById('prof-dob').value;
+            if (!dobInput) return;
+            const dob = new Date(dobInput);
+            const diff = Date.now() - dob.getTime();
+            const ageDate = new Date(diff);
+            const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+            document.getElementById('auto-age').innerText = age + " Tahun";
+            return age;
+        }
+
+        function populateProfileForm() {
+            if (!currentUser) return;
+            document.getElementById('prof-name').value = currentUser.name;
+            document.getElementById('prof-dob').value = currentUser.dob;
+            document.getElementById('prof-gender').value = currentUser.gender;
+            document.getElementById('prof-goal').value = currentUser.goal;
+            document.getElementById('prof-height').value = currentUser.height;
+            document.getElementById('prof-weight').value = currentUser.weight;
+            document.getElementById('prof-target-weight').value = currentUser.targetWeight;
+            document.getElementById('prof-exp').value = currentUser.experience;
+            document.getElementById('prof-rhr').value = currentUser.rhr;
+            document.getElementById('prof-mhr').value = currentUser.mhr || '';
+            document.getElementById('prof-injury').value = currentUser.injury;
+            document.getElementById('prof-comorbid').value = currentUser.comorbid;
+
+            triggerDiagnosticCalculations();
+        }
+
+        function triggerDiagnosticCalculations() {
+            const height = parseFloat(document.getElementById('prof-height').value) / 100;
+            const weight = parseFloat(document.getElementById('prof-weight').value);
+            const targetWeight = parseFloat(document.getElementById('prof-target-weight').value);
+            const rhr = parseFloat(document.getElementById('prof-rhr').value);
+            const dobInput = document.getElementById('prof-dob').value;
+            const customMhr = parseFloat(document.getElementById('prof-mhr').value);
+
+            if (!height || !weight || !dobInput) return;
+
+            // Age
+            const dob = new Date(dobInput);
+            const age = Math.abs(new Date(Date.now() - dob.getTime()).getUTCFullYear() - 1970);
+            document.getElementById('auto-age').innerText = age + " Tahun";
+
+            // BMI
+            const bmi = (weight / (height * height)).toFixed(1);
+            let status = "Normal";
+            if (bmi < 18.5) status = "Kurang Berat Badan";
+            else if (bmi >= 25) status = "Kelebihan Berat Badan";
+            document.getElementById('auto-bmi').innerText = `${bmi} (${status})`;
+
+            // Target BMI
+            const targetBmi = (targetWeight / (height * height)).toFixed(1);
+
+            // Max HR & VO2Max Estimation
+            const mhr = customMhr || (220 - age);
+            const vo2max = (15.3 * (mhr / rhr)).toFixed(1);
+            document.getElementById('auto-vo2max').innerText = vo2max + " ml/kg/min";
+
+            // Weekly Target
+            let weeklyTarget = 12;
+            const goal = document.getElementById('prof-goal').value;
+            if (goal.includes("Weight") || goal.includes("Endurance")) weeklyTarget = 18;
+            else if (goal.includes("5K")) weeklyTarget = 15;
+            else if (goal.includes("10K")) weeklyTarget = 24;
+            else if (goal.includes("Half")) weeklyTarget = 35;
+            else if (goal.includes("Marathon")) weeklyTarget = 50;
+            document.getElementById('auto-weekly-target').innerText = weeklyTarget + " km";
+        }
+
+        function saveProfile(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const height = parseFloat(document.getElementById('prof-height').value);
+            const weight = parseFloat(document.getElementById('prof-weight').value);
+            const targetWeight = parseFloat(document.getElementById('prof-target-weight').value);
+            const rhr = parseFloat(document.getElementById('prof-rhr').value);
+            const customMhr = parseFloat(document.getElementById('prof-mhr').value);
+            const dobInput = document.getElementById('prof-dob').value;
+
+            const dob = new Date(dobInput);
+            const age = Math.abs(new Date(Date.now() - dob.getTime()).getUTCFullYear() - 1970);
+            const bmi = parseFloat((weight / ((height/100) * (height/100))).toFixed(1));
+            
+            let bmiStatus = "Normal";
+            if (bmi < 18.5) bmiStatus = "Kurang Berat Badan";
+            else if (bmi >= 25) bmiStatus = "Kelebihan Berat Badan";
+
+            const targetBmi = parseFloat((targetWeight / ((height/100) * (height/100))).toFixed(1));
+            const mhr = customMhr || (220 - age);
+            const vo2max = parseFloat((15.3 * (mhr / rhr)).toFixed(1));
+
+            let weeklyTarget = 12;
+            const goal = document.getElementById('prof-goal').value;
+            if (goal.includes("Weight") || goal.includes("Endurance")) weeklyTarget = 18;
+            else if (goal.includes("5K")) weeklyTarget = 15;
+            else if (goal.includes("10K")) weeklyTarget = 24;
+            else if (goal.includes("Half")) weeklyTarget = 35;
+            else if (goal.includes("Marathon")) weeklyTarget = 50;
+
+            // Update user properties
+            currentUser.name = document.getElementById('prof-name').value;
+            currentUser.dob = dobInput;
+            currentUser.gender = document.getElementById('prof-gender').value;
+            currentUser.goal = goal;
+            currentUser.height = height;
+            currentUser.weight = weight;
+            currentUser.targetWeight = targetWeight;
+            currentUser.experience = document.getElementById('prof-exp').value;
+            currentUser.rhr = rhr;
+            currentUser.mhr = mhr;
+            currentUser.injury = document.getElementById('prof-injury').value;
+            currentUser.comorbid = document.getElementById('prof-comorbid').value;
+            currentUser.age = age;
+            currentUser.bmi = bmi;
+            currentUser.bmiStatus = bmiStatus;
+            currentUser.targetBmi = targetBmi;
+            currentUser.vo2max = vo2max;
+            currentUser.weeklyTarget = weeklyTarget;
+
+            // Save to users list
+            const index = users.findIndex(u => u.id === currentUser.id);
+            if (index !== -1) users[index] = currentUser;
+            localStorage.setItem("rt_users", JSON.stringify(users));
+            sessionStorage.setItem("rt_active_user", JSON.stringify(currentUser));
+
+            // Sync User to Sheets
+            enqueueSync('USERS', currentUser);
+
+            // Re-render
+            updateCurrentUserDashboard();
+            
+            // Build Dynamic training plan automatically
+            generateAITrainingPlan(currentUser);
+
+            alert("Profil berhasil diperbarui dan program latihan baru telah disinkronkan oleh AI Coach.");
+            navigate('dashboard');
+        }
+
+        // AI RUNNING COACH DYNAMIC GENERATOR
+        function generateAITrainingPlan(user) {
+            const workouts = [];
+            const goal = user.goal;
+
+            if (goal.includes("Menurunkan Berat Badan")) {
+                workouts.push(
+                    { day: "Senin", title: "Easy Zone 2 Run", target: "3 km", pace: "Easy Pace", desc: "Pertahankan detak jantung di Zona 2 (Aerobik) untuk efisiensi lemak." },
+                    { day: "Rabu", title: "Interval Fat Burn", target: "4 x 400m", pace: "Fast Pace", desc: "400m cepat, dilanjutkan 400m jalan kaki. Total 4 repetisi." },
+                    { day: "Jumat", title: "Easy Zone 2 Run", target: "3.5 km", pace: "Easy Pace", desc: "Lari santai konstan, nikmati pemandangan sekitar." },
+                    { day: "Minggu", title: "Long Slow Distance (LSD)", target: "6 km", pace: "Very Slow", desc: "Target jarak, bukan kecepatan. Bawa minum." }
+                );
+            } else if (goal.includes("5K Finisher")) {
+                workouts.push(
+                    { day: "Senin", title: "Easy Run", target: "3 km", pace: "7:15 - 8:00 /km", desc: "Fokus pada kenyamanan langkah." },
+                    { day: "Rabu", title: "Tempo Run", target: "2.5 km", pace: "6:30 - 7:00 /km", desc: "Lari di batas ambang pernafasan (Zona 3-4)." },
+                    { day: "Jumat", title: "Interval 5K Speed", target: "5 x 200m", pace: "Sprint", desc: "Kembalikan kelenturan otot kaki dengan akselerasi cepat." },
+                    { day: "Minggu", title: "Long Run", target: "5 km", pace: "Easy Pace", desc: "Simulasi Finisher 5K tanpa henti." }
+                );
+            } else if (goal.includes("10K Finisher") || goal.includes("Half Marathon") || goal.includes("Marathon")) {
+                workouts.push(
+                    { day: "Senin", title: "Base Recovery Run", target: "5 km", pace: "Easy Pace", desc: "Atur nafas teratur." },
+                    { day: "Rabu", title: "Hill Repeat / Strength", target: "6 x 150m uphill", pace: "Strong Pace", desc: "Cari tanjakan sedang, dorong tenaga saat menanjak." },
+                    { day: "Jumat", title: "Tempo Cruise", target: "6 km", pace: "Steady", desc: "Konsisten pada pace race target." },
+                    { day: "Minggu", title: "Long Endurance Run", target: "10 - 15 km", pace: "Slow Pace", desc: "Latihan ketahanan mental dan fisik jangka panjang." }
+                );
+            } else {
+                workouts.push(
+                    { day: "Senin", title: "Easy Walk & Jog", target: "2 km", pace: "Easy Jog", desc: "Lari santai diselingi jalan kaki." },
+                    { day: "Rabu", title: "Steady Run", target: "3 km", pace: "Comfortable", desc: "Lari santai tanpa henti." },
+                    { day: "Minggu", title: "Sunday Funday Run", target: "4 km", pace: "Easy Jog", desc: "Jaga kebugaran jantung dan paru-paru." }
+                );
+            }
+
+            const trainingPlanObj = {
+                userId: user.id,
+                goal: goal,
+                workouts: workouts,
+                generatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem(`rt_plan_${user.id}`, JSON.stringify(trainingPlanObj));
+            enqueueSync('TRAINING_PLAN', trainingPlanObj);
+        }
+
+        // RENDER WEEKLY TRAINING PLAN
+        function renderWeeklyTrainingPlan() {
+            const grid = document.getElementById('coach-sessions-grid');
+            grid.innerHTML = '';
+
+            let planObj = localStorage.getItem(`rt_plan_${currentUser.id}`);
+            if (!planObj) {
+                generateAITrainingPlan(currentUser);
+                planObj = localStorage.getItem(`rt_plan_${currentUser.id}`);
+            }
+
+            const plan = JSON.parse(planObj);
+            document.getElementById('coach-goal-subtitle').innerText = `Tujuan: ${plan.goal} • Disesuaikan untuk level ${currentUser.experience}`;
+
+            plan.workouts.forEach((workout, idx) => {
+                const card = document.createElement('div');
+                card.className = "dark:bg-brand-card bg-white p-5 rounded-2xl border dark:border-brand-border border-slate-200 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-black text-brand-orange uppercase tracking-widest">${workout.day}</span>
+                            <span class="bg-slate-900 text-slate-300 text-[10px] px-2.5 py-1 rounded-md font-bold">${workout.pace}</span>
+                        </div>
+                        <h4 class="text-lg font-extrabold mb-1">${workout.title}</h4>
+                        <p class="text-xs text-slate-400 mb-3">${workout.desc}</p>
+                        <div class="inline-block py-1.5 px-3 bg-slate-950 dark:bg-slate-950 rounded-lg text-sm font-black text-brand-volt mb-4">
+                            Target: ${workout.target}
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="openRunLogModal('${workout.day}', '${workout.title}', ${idx})" class="w-full py-2 bg-brand-orange hover:bg-brand-orange/90 text-white font-bold text-xs rounded-xl transition-all">
+                            Input Hasil Latihan
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // INPUT RUN LOG RESULTS & AUTOMATIC METRICS EVALUATION
+        function openRunLogModal(day, title, index) {
+            document.getElementById('log-modal-title').innerText = `Log Hasil Latihan: ${day} - ${title}`;
+            document.getElementById('log-session-index').value = index;
+            document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('run-log-modal').classList.remove('hidden');
+        }
+
+        function closeRunLogModal() {
+            document.getElementById('run-log-modal').classList.add('hidden');
+        }
+
+        function saveRunLog(e) {
+            e.preventDefault();
+
+            const dist = parseFloat(document.getElementById('log-distance').value);
+            const durationRaw = document.getElementById('log-duration').value;
+            const avghr = parseInt(document.getElementById('log-avghr').value);
+            const maxhr = parseInt(document.getElementById('log-maxhr').value);
+            const cadence = parseInt(document.getElementById('log-cadence').value) || 165;
+            const elevation = parseInt(document.getElementById('log-elevation').value) || 0;
+            const rpe = parseInt(document.getElementById('log-rpe').value);
+            const notes = document.getElementById('log-notes').value;
+            const date = document.getElementById('log-date').value;
+
+            // Convert duration to seconds
+            const parts = durationRaw.split(':');
+            let secs = 0;
+            if (parts.length === 3) {
+                secs = (+parts[0]) * 3600 + (+parts[1]) * 60 + (+parts[2]);
+            } else if (parts.length === 2) {
+                secs = (+parts[0]) * 60 + (+parts[1]);
+            } else {
+                secs = parseFloat(durationRaw) * 60;
+            }
+
+            const mins = secs / 60;
+            const hours = mins / 60;
+
+            // Calculate Pace
+            const paceDec = mins / dist;
+            const paceMins = Math.floor(paceDec);
+            const paceSecs = Math.round((paceDec - paceMins) * 60);
+            const avgPaceStr = `${paceMins}:${paceSecs < 10 ? '0' : ''}${paceSecs}`;
+
+            // Calories Estimation
+            const calories = Math.round(8.5 * currentUser.weight * hours);
+
+            // AUTO AI EVALUATION LOGIC
+            const zoneTarget = (avghr / currentUser.mhr) * 100;
+            let feedback = "";
+            if (zoneTarget > 85) {
+                feedback = `Hari ini Anda berlari ${dist} km dengan pace rata-rata ${avgPaceStr}/km dan HR rata-rata ${avghr} bpm. Mayoritas latihan berada di Zona 4/5 sehingga intensitas jauh lebih tinggi dari target Easy Run yang direncanakan. Disarankan menurunkan pace pada sesi berikutnya agar tetap berada di Zona 2 untuk meningkatkan kapasitas aerobik serta mencegah overtraining.`;
+            } else if (zoneTarget >= 60 && zoneTarget < 75) {
+                feedback = `Luar biasa! Latihan lari sejauh ${dist} km berhasil diselesaikan dengan baik di Zona 2 (Aerobic). Intensitas ini sangat sempurna untuk memperkuat otot jantung, pembakaran cadangan lemak secara maksimal, serta membangun ketahanan dasar kaki Anda. Pertahankan konsistensi ini!`;
+            } else {
+                feedback = `Sesi pemulihan yang sangat pas. Jarak ${dist} km pada detak jantung pemulihan membantu melancarkan aliran darah ke seluruh sel otot tanpa memicu kelelahan akumulatif. Sangat ideal untuk menjaga kebugaran tubuh Anda.`;
+            }
+
+            const newLog = {
+                id: "log-" + Date.now(),
+                userId: currentUser.id,
+                date: date,
+                distance: dist,
+                duration: durationRaw,
+                avgPace: avgPaceStr,
+                avgHr: avghr,
+                maxHr: maxhr,
+                cadence: cadence,
+                calories: calories,
+                elevation: elevation,
+                rpe: rpe,
+                notes: notes,
+                evaluation: feedback
+            };
+
+            dbLogs.push(newLog);
+            localStorage.setItem("rt_logs", JSON.stringify(dbLogs));
+
+            // Sync Log to Sheets
+            enqueueSync('RUN_LOGS', newLog);
+
+            closeRunLogModal();
+            updateCurrentUserDashboard();
+            initializeCharts();
+
+            // Trigger AI Advice modal popup
+            document.getElementById('eval-modal-content').innerHTML = `
+                <p class="font-bold text-white text-base mb-2">Evaluasi Sesi:</p>
+                <p class="bg-slate-950 p-3.5 rounded-xl border border-brand-border text-slate-300 italic mb-3">"${feedback}"</p>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <span class="text-slate-400">Kalori Terbakar:</span> <strong class="text-white">${calories} Kkal</strong>
+                    <span class="text-slate-400">Rata-rata Pace:</span> <strong class="text-white">${avgPaceStr} /km</strong>
+                </div>
+            `;
+            document.getElementById('eval-modal').classList.remove('hidden');
+        }
+
+        function closeEvalModal() {
+            document.getElementById('eval-modal').classList.add('hidden');
+        }
+
+        // UPDATE CURRENT USER DASHBOARD (Strictly filtered logs by currentUser.id)
+        function updateCurrentUserDashboard() {
+            if (!currentUser) return;
+
+            // Filter logs strictly for active logged-in user
+            const userLogs = dbLogs.filter(log => log.userId === currentUser.id);
+
+            // Dashboard Quick Metrics
+            const totalRuns = userLogs.length;
+            const totalDist = userLogs.reduce((acc, curr) => acc + curr.distance, 0);
+            
+            let avgPaceStr = "0:00";
+            if (totalRuns > 0) {
+                let totalPaceMins = 0;
+                userLogs.forEach(log => {
+                    const p = log.avgPace.split(':');
+                    const m = parseInt(p[0]);
+                    const s = p[1] ? parseInt(p[1]) : 0;
+                    totalPaceMins += (m + (s/60));
+                });
+                const avgPaceDec = totalPaceMins / totalRuns;
+                const min = Math.floor(avgPaceDec);
+                const sec = Math.round((avgPaceDec - min) * 60);
+                avgPaceStr = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+            }
+
+            // Estimate Dynamic VO2Max based on HR ratios on completed runs
+            let dynamicVo2 = currentUser.vo2max;
+            if (userLogs.length > 0) {
+                const lastLog = userLogs[userLogs.length - 1];
+                const est = 15.3 * (currentUser.mhr / lastLog.avgHr);
+                if (!isNaN(est) && est > 20 && est < 85) {
+                    dynamicVo2 = parseFloat(est.toFixed(1));
+                }
+            }
+
+            // Set UI elements
+            document.getElementById('stat-total-runs').innerText = totalRuns;
+            document.getElementById('stat-total-dist').innerText = totalDist.toFixed(1) + " km";
+            document.getElementById('stat-avg-pace').innerText = avgPaceStr + " /km";
+            document.getElementById('stat-vo2max').innerText = dynamicVo2;
+
+            // VO2Max category definition
+            let cat = "Good";
+            if (dynamicVo2 < 35) cat = "Poor";
+            else if (dynamicVo2 < 42) cat = "Fair";
+            else if (dynamicVo2 < 48) cat = "Average";
+            else if (dynamicVo2 < 55) cat = "Excellent";
+            else cat = "Superior";
+
+            document.getElementById('stat-vo2max-cat').innerText = cat;
+
+            // Training Load Calculation (ATL vs CTL)
+            let atl = 0; // Acute (7 days)
+            let ctl = 0; // Chronic (28 days)
+
+            const now = new Date();
+            userLogs.forEach(log => {
+                const logDate = new Date(log.date);
+                const diffTime = Math.abs(now - logDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                const p = log.duration.split(':');
+                let mins = 30;
+                if (p.length === 3) mins = parseInt(p[0]) * 60 + parseInt(p[1]);
+                const loadScore = mins * log.rpe;
+
+                if (diffDays <= 7) {
+                    atl += loadScore;
+                }
+                if (diffDays <= 28) {
+                    ctl += loadScore;
+                }
+            });
+
+            const rawFitness = Math.round(ctl / 28);
+            const rawFatigue = Math.round(atl / 7);
+            const rawForm = rawFitness - rawFatigue;
+
+            document.getElementById('load-fitness').innerText = rawFitness;
+            document.getElementById('load-fatigue').innerText = rawFatigue;
+            document.getElementById('load-form').innerText = rawForm;
+
+            let loadMsg = "";
+            if (rawForm < -20) {
+                loadMsg = "Fatigue (Kelelahan) Anda terlalu tinggi! Risiko cedera meningkat. AI menyarankan istirahat penuh selama 2-3 hari ke depan.";
+            } else if (rawForm >= -20 && rawForm <= 5) {
+                loadMsg = "Zona Latihan Optimal. Kebugaran (Fitness) Anda meningkat secara bertahap tanpa risiko overtraining berat.";
+            } else {
+                loadMsg = "Freshness optimal. Siap untuk melakukan tantangan baru atau tes jarak jauh (Long Run).";
+            }
+            document.getElementById('load-status-msg').innerText = `"${loadMsg}"`;
+
+            // HR Zones calculation based on current user Max HR
+            document.getElementById('dashboard-maxhr').innerText = `Max: ${currentUser.mhr} BPM`;
+            renderHeartRateZones(currentUser.mhr);
+
+            // Weekly goal visual check
+            document.getElementById('plan-goal-text').innerText = `Tujuan: ${currentUser.goal} (Target: ${currentUser.weeklyTarget}km/Minggu)`;
+
+            renderDashboardWeeklyList();
+        }
+
+        function renderHeartRateZones(maxHr) {
+            const zones = [
+                { name: "Zone 1 Recovery", min: 0.50, max: 0.60, color: "bg-blue-500" },
+                { name: "Zone 2 Aerobic", min: 0.60, max: 0.70, color: "bg-green-500" },
+                { name: "Zone 3 Endurance", min: 0.70, max: 0.80, color: "bg-yellow-500" },
+                { name: "Zone 4 Threshold", min: 0.80, max: 0.90, color: "bg-orange-500" },
+                { name: "Zone 5 Maximum", min: 0.90, max: 1.00, color: "bg-red-500" }
+            ];
+
+            const container = document.getElementById('hr-zones-container');
+            container.innerHTML = '';
+
+            zones.forEach(z => {
+                const minBpm = Math.round(maxHr * z.min);
+                const maxBpm = Math.round(maxHr * z.max);
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span class="font-bold">${z.name}</span>
+                        <span class="text-slate-400 font-medium">${minBpm} - ${maxBpm} BPM</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-2">
+                        <div class="${z.color} h-2 rounded-full" style="width: ${z.max * 100}%"></div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderDashboardWeeklyList() {
+            const container = document.getElementById('dashboard-weekly-plan');
+            container.innerHTML = '';
+
+            let planObj = localStorage.getItem(`rt_plan_${currentUser.id}`);
+            if (!planObj) {
+                generateAITrainingPlan(currentUser);
+                planObj = localStorage.getItem(`rt_plan_${currentUser.id}`);
+            }
+
+            const plan = JSON.parse(planObj);
+            plan.workouts.forEach((workout, idx) => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-3 bg-slate-900 rounded-xl border border-slate-800";
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center text-brand-orange font-black text-xs uppercase">${workout.day.substring(0,3)}</span>
+                        <div>
+                            <p class="text-sm font-extrabold text-white">${workout.title}</p>
+                            <p class="text-[10px] text-slate-400">${workout.desc}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-black text-brand-volt block">${workout.target}</span>
+                        <button onclick="openRunLogModal('${workout.day}', '${workout.title}', ${idx})" class="text-[10px] text-brand-orange hover:underline font-bold">Log</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // CHARTING ENGINE (Chart.js implementation)
+        function initializeCharts() {
+            const canvas = document.getElementById('dashboardChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const userLogs = dbLogs.filter(log => log.userId === currentUser.id);
+
+            let labels = [];
+            let distances = [];
+            let averageHr = [];
+
+            if (userLogs.length === 0) {
+                labels = ["Belum ada aktivitas"];
+                distances = [0];
+                averageHr = [0];
+            } else {
+                userLogs.forEach(log => {
+                    labels.push(log.date);
+                    distances.push(log.distance);
+                    averageHr.push(log.avgHr);
+                });
+            }
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Distance (km)',
+                            data: distances,
+                            borderColor: '#FF5722',
+                            backgroundColor: 'rgba(255, 87, 34, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Avg Heart Rate (BPM)',
+                            data: averageHr,
+                            borderColor: '#ADFF2F',
+                            backgroundColor: 'rgba(173, 255, 47, 0.05)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#94A3B8'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(30, 41, 59, 0.5)' },
+                            ticks: { color: '#94A3B8' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(30, 41, 59, 0.5)' },
+                            ticks: { color: '#94A3B8' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#ADFF2F' }
+                        }
+                    }
+                }
+            });
+
+            if (currentView === 'analytics') {
+                renderLoadTrendsChart(userLogs);
+                renderPaceHrChart(userLogs);
+                renderWeightVo2Chart();
+            }
+        }
+
+        function updateChartFilter(filter) {
+            activeChartFilter = filter;
+            const btns = document.querySelectorAll('.chart-filter-btn');
+            btns.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(filter)) {
+                    btn.classList.add('bg-brand-orange', 'text-white');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    btn.classList.remove('bg-brand-orange', 'text-white');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+            initializeCharts();
+        }
+
+        function renderLoadTrendsChart(userLogs) {
+            const ctx = document.getElementById('loadTrendsChart').getContext('2d');
+            let labels = userLogs.map(l => l.date);
+            let fitnessData = [];
+            let fatigueData = [];
+            let formData = [];
+
+            let runningFitness = 10;
+            userLogs.forEach(l => {
+                runningFitness += l.rpe * 1.5;
+                fitnessData.push(Math.round(runningFitness));
+                fatigueData.push(l.rpe * 10);
+                formData.push(Math.round(runningFitness - (l.rpe * 10)));
+            });
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Fitness (CTL)', data: fitnessData, borderColor: '#10B981', fill: false },
+                        { label: 'Fatigue (ATL)', data: fatigueData, borderColor: '#EF4444', fill: false },
+                        { label: 'Form (Freshness)', data: formData, borderColor: '#ADFF2F', fill: true, backgroundColor: 'rgba(173,255,47,0.05)' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94A3B8' } } },
+                    scales: {
+                        x: { ticks: { color: '#94A3B8' } },
+                        y: { ticks: { color: '#94A3B8' } }
+                    }
+                }
+            });
+        }
+
+        function renderPaceHrChart(userLogs) {
+            const ctx = document.getElementById('paceHrChart').getContext('2d');
+            let labels = userLogs.map(l => l.date);
+            let paces = userLogs.map(l => {
+                const parts = l.avgPace.split(':');
+                return parseFloat(parts[0]) + (parts[1] ? parseFloat(parts[1])/60 : 0);
+            });
+            let hrs = userLogs.map(l => l.avgHr);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Pace (Decimal Min/km)', data: paces, backgroundColor: '#FF5722' },
+                        { label: 'Heart Rate (BPM)', data: hrs, type: 'line', borderColor: '#ADFF2F' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94A3B8' } } },
+                    scales: {
+                        x: { ticks: { color: '#94A3B8' } },
+                        y: { ticks: { color: '#94A3B8' } }
+                    }
+                }
+            });
+        }
+
+        function renderWeightVo2Chart() {
+            const ctx = document.getElementById('weightVo2Chart').getContext('2d');
+            let labels = ["Week 1", "Week 2", "Week 3", "Week 4"];
+            let weights = [currentUser.weight, currentUser.weight - 0.5, currentUser.weight - 0.8, currentUser.weight - 1.2];
+            let vo2s = [currentUser.vo2max - 0.5, currentUser.vo2max, currentUser.vo2max + 0.3, currentUser.vo2max + 0.8];
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Berat Badan (kg)', data: weights, borderColor: '#3B82F6' },
+                        { label: 'VO2Max', data: vo2s, borderColor: '#F59E0B' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94A3B8' } } },
+                    scales: {
+                        x: { ticks: { color: '#94A3B8' } },
+                        y: { ticks: { color: '#94A3B8' } }
+                    }
+                }
+            });
+        }
+
+        // COACH AI CHATBOT
+        let chatMessages = [
+            { sender: 'coach', text: 'Halo! Saya AI Coach lari Anda. Tanyakan saya seputar jadwal latihan lari, optimalisasi Pace, zona Heart Rate, estimasi VO2Max, pencegahan cedera, strategi perlombaan (Race), maupun pola nutrisi lari Anda!' }
+        ];
+
+        function renderChatHistory() {
+            const container = document.getElementById('chat-messages-container');
+            container.innerHTML = '';
+
+            chatMessages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = `flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                
+                const inner = document.createElement('div');
+                inner.className = `max-w-[75%] p-3.5 rounded-2xl text-sm ${msg.sender === 'user' ? 'bg-brand-orange text-white' : 'bg-slate-800 dark:bg-slate-900 text-slate-100'}`;
+                inner.innerText = msg.text;
+
+                div.appendChild(inner);
+                container.appendChild(div);
+            });
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendCoachMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input-field');
+            const text = input.value.trim();
+            if (!text) return;
+
+            chatMessages.push({ sender: 'user', text: text });
+            renderChatHistory();
+            input.value = '';
+
+            setTimeout(() => {
+                const query = text.toLowerCase();
+                let reply = "";
+
+                const allowedKeywords = ["pace", "heart rate", "vo2max", "recovery", "marathon", "half marathon", "endurance", "injury", "prevent", "nutrition", "diet", "makan", "karbo", "race", "strategy", "cedera", "program", "latihan", "jadwal", "lari", "detak jantung"];
+                const isRelevant = allowedKeywords.some(keyword => query.includes(keyword));
+
+                if (!isRelevant) {
+                    reply = "Maaf, saya hanya dapat membantu seputar latihan lari dan program yang terdapat dalam aplikasi ini.";
+                } else {
+                    if (query.includes("nutrition") || query.includes("makan") || query.includes("karbo")) {
+                        reply = "Bagi pelari pemula, fokuslah pada Karbohidrat kompleks (nasi merah, pisang, oat) 2 jam sebelum berlari untuk cadangan energi, serta protein tinggi setelah lari untuk pemulihan serabut otot Anda.";
+                    } else if (query.includes("cedera") || query.includes("injury")) {
+                        reply = "Pencegahan cedera terbaik adalah pemanasan dinamis 5-10 menit sebelum lari, meningkatkan volume mingguan maksimal 10% per minggu, serta selalu dengarkan tubuh jika sendi terasa sakit.";
+                    } else if (query.includes("pace")) {
+                        reply = "Pace terbaik untuk melatih ketahanan aerobik dasar (aerobic base) adalah 'conversational pace' di mana Anda masih bisa berbicara kalimat lengkap tanpa tersengal-sengal.";
+                    } else if (query.includes("vo2max")) {
+                        reply = "Meningkatkan VO2max dapat dicapai secara efisien dengan mengombinasikan lari interval intensitas tinggi (HIIT) sekali seminggu dengan lari jarak jauh intensitas rendah (Zone 2).";
+                    } else {
+                        reply = "Untuk mempercepat recovery pasca-lari, usahakan melakukan pendinginan, hidrasi cukup elektrolit, tidur 7-8 jam berkualitas, serta asupan nutrisi protein tinggi.";
+                    }
+                }
+
+                chatMessages.push({ sender: 'coach', text: reply });
+                renderChatHistory();
+            }, 800);
+        }
+
+        function clearChatHistory() {
+            chatMessages = [
+                { sender: 'coach', text: 'Halo! Saya AI Coach lari Anda. Mari diskusikan latihan lari kita!' }
+            ];
+            renderChatHistory();
+        }
+
+        // REMINDERS & NOTIFICATION CARDS
+        function setupReminders() {
+            const container = document.getElementById('reminder-container');
+            const text = document.getElementById('reminder-text');
+
+            if (!currentUser) return;
+
+            const reminders = [
+                `Latihan Anda hari ini: Lakukan pemanasan dinamis sebelum berlari.`,
+                `Saran Pemulihan: Pastikan hidrasi 2-3 liter air per hari.`,
+                `Target Mingguan: Kejar target lari Anda sebesar ${currentUser.weeklyTarget} km minggu ini.`,
+                `Ingat untuk mencatat berat badan Anda agar mempermudah pemantauan BMI.`
+            ];
+
+            const idx = Math.floor(Math.random() * reminders.length);
+            text.innerText = "Coach Reminder: " + reminders[idx];
+            container.classList.remove('hidden');
+        }
+
+        function closeReminder() {
+            document.getElementById('reminder-container').classList.add('hidden');
+        }
+
+        function toggleNotifications() {
+            const badge = document.getElementById('notif-badge');
+            badge.classList.toggle('hidden');
+            alert("Notifikasi: Semua jadwal latihan lari Anda sinkron. Jaga kesehatan!");
+        }
+
+        // DATA EXPORT
+        function exportToCSV() {
+            const userLogs = dbLogs.filter(log => log.userId === currentUser.id);
+            if (userLogs.length === 0) {
+                alert("Tidak ada log aktivitas lari untuk di-export.");
+                return;
+            }
+
+            const csv = Papa.unparse(userLogs);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `RunTracker_${currentUser.name.replace(/\s+/g, '_')}_Logs.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const userLogs = dbLogs.filter(log => log.userId === currentUser.id);
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(22);
+            doc.setTextColor(255, 87, 34);
+            doc.text("LAPORAN PERFORMA - RUN TRACKER AI", 14, 25);
+
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Dicetak pada: ${new Date().toLocaleDateString('id-ID')}`, 14, 32);
+
+            doc.setDrawColor(200);
+            doc.line(14, 35, 196, 35);
+
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text("Profil Pelari", 14, 45);
+
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`Nama: ${currentUser.name}`, 14, 52);
+            doc.text(`Username: ${currentUser.username}`, 14, 58);
+            doc.text(`Tujuan: ${currentUser.goal}`, 14, 64);
+            doc.text(`BMI: ${currentUser.bmi} (${currentUser.bmiStatus})`, 14, 70);
+            doc.text(`VO2Max Estimasi: ${currentUser.vo2max}`, 14, 76);
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text("Ringkasan Latihan", 14, 90);
+
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`Total Lari: ${userLogs.length} Sesi`, 14, 97);
+            const totalD = userLogs.reduce((acc, curr) => acc + curr.distance, 0);
+            doc.text(`Total Jarak: ${totalD.toFixed(1)} km`, 14, 103);
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text("Rekomendasi Coach AI", 14, 120);
+
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(10);
+            doc.setTextColor(50, 50, 50);
+            const lastLog = userLogs[userLogs.length - 1];
+            const latestEval = lastLog ? lastLog.evaluation : "Mulailah berlari agar AI Coach dapat menyusun evaluasi khusus untuk Anda.";
+            
+            const splitText = doc.splitTextToSize(latestEval, 180);
+            doc.text(splitText, 14, 127);
+
+            doc.save(`Laporan_Lari_${currentUser.name.replace(/\s+/g, '_')}.pdf`);
+        }
+
+        // THEME MANAGEMENT
+        function toggleTheme() {
+            const html = document.documentElement;
+            const sunIcon = document.getElementById('theme-icon-sun');
+            const moonIcon = document.getElementById('theme-icon-moon');
+
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                localStorage.setItem("rt_theme", "light");
+            } else {
+                html.classList.add('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                localStorage.setItem("rt_theme", "dark");
+            }
+        }
+
+        // OFFLINE SYNC (Google Apps Script Integration Engine)
+        function checkOnlineStatus() {
+            const dot = document.getElementById('sync-indicator-dot');
+            const txt = document.getElementById('sync-indicator-text');
+
+            if (navigator.onLine) {
+                dot.className = "w-2.5 h-2.5 bg-green-500 rounded-full inline-block mr-2 animate-pulse";
+                txt.innerText = "Online";
+                flushSyncQueue();
+            } else {
+                dot.className = "w-2.5 h-2.5 bg-yellow-500 rounded-full inline-block mr-2";
+                txt.innerText = "Offline (Cached)";
+            }
+        }
+
+        function enqueueSync(sheetName, payload) {
+            const syncItem = {
+                id: Date.now() + "_" + Math.floor(Math.random() * 100),
+                sheet: sheetName,
+                data: payload,
+                timestamp: new Date().toISOString()
+            };
+
+            syncQueue.push(syncItem);
+            localStorage.setItem("rt_sync_queue", JSON.stringify(syncQueue));
+
+            if (navigator.onLine) {
+                flushSyncQueue();
+            }
+        }
+
+        async function flushSyncQueue() {
+            if (syncQueue.length === 0 || GAS_URL.includes("https://script.google.com/macros/s/AKfycbxax7yZXKOs6rdu9SMMWDihDrDYO-FpTaOkI_6GdmlSBPOIFOIBmHyu1sULiT5L1055bQ/exec")) return;
+
+            const dot = document.getElementById('sync-indicator-dot');
+            const txt = document.getElementById('sync-indicator-text');
+            
+            dot.className = "w-2.5 h-2.5 bg-blue-500 rounded-full inline-block mr-2 animate-spin";
+            txt.innerText = "Syncing...";
+
+            while (syncQueue.length > 0) {
+                const item = syncQueue[0];
+                try {
+                    await fetch(GAS_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(item)
+                    });
+
+                    syncQueue.shift();
+                    localStorage.setItem("rt_sync_queue", JSON.stringify(syncQueue));
+                } catch (err) {
+                    console.log("Sync error, retrying later:", err);
+                    break;
+                }
+            }
+
+            checkOnlineStatus();
+        }
+
+        function forceSync() {
+            alert("Memaksa sinkronisasi dengan Google Sheets...");
+            flushSyncQueue();
+        }
+    </script>
 </body>
 </html>
