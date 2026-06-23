@@ -57,101 +57,209 @@
             to { transform: translateY(-8px); }
         }
 
-        /* --- ANIMASI BIOMEKANIKA GERAKAN STRETCHING (WARMUP & COOLDOWN) --- */
-        /* 1. Leg Swings */
-        @keyframes anim-leg-swing {
-            0% { transform: rotate(-30deg); }
-            100% { transform: rotate(35deg); }
+        /* --- UPGRADED HIGH-TECH BIOMECHANICS ANIMATIONS --- */
+        
+        /* Grid scanning effect background */
+        #stretching-animation-container {
+            background-image: 
+                linear-gradient(0deg, transparent 24%, rgba(255, 87, 34, 0.04) 25%, rgba(255, 87, 34, 0.04) 26%, transparent 27%, transparent 74%, rgba(255, 87, 34, 0.04) 75%, rgba(255, 87, 34, 0.04) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(255, 87, 34, 0.04) 25%, rgba(255, 87, 34, 0.04) 26%, transparent 27%, transparent 74%, rgba(255, 87, 34, 0.04) 75%, rgba(255, 87, 34, 0.04) 76%, transparent 77%, transparent);
+            background-size: 15px 15px;
+            position: relative;
         }
-        .swing-leg-active {
-            transform-origin: 50px 75px;
-            animation: anim-leg-swing 1.2s ease-in-out infinite alternate;
+        
+        /* Scanning Laser Line */
+        #stretching-animation-container::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FF5722, #ADFF2F, #FF5722, transparent);
+            opacity: 0.4;
+            animation: scanner-loop 4s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes scanner-loop {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
         }
 
-        /* 2. High Knees */
-        @keyframes anim-high-knee-left {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-55deg); }
+        /* Pulsing Muscle Strain Glow */
+        @keyframes muscle-strain-pulse {
+            0%, 100% { opacity: 0.3; filter: drop-shadow(0 0 2px rgba(173, 255, 47, 0.3)); }
+            50% { opacity: 0.95; filter: drop-shadow(0 0 8px rgba(173, 255, 47, 0.8)); }
         }
-        @keyframes anim-high-knee-right {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(55deg); }
+        .muscle-target-active {
+            animation: muscle-strain-pulse 1.5s ease-in-out infinite;
         }
-        .hk-left-leg {
-            transform-origin: 45px 75px;
-            animation: anim-high-knee-left 0.8s ease-in-out infinite;
+
+        /* 1. Leg Swings (Double articulation: Hip and Knee) */
+        @keyframes anim-hip-swing {
+            0% { transform: rotate(-25deg); }
+            100% { transform: rotate(35deg); }
         }
-        .hk-right-leg {
-            transform-origin: 55px 75px;
-            animation: anim-high-knee-right 0.8s ease-in-out infinite;
+        @keyframes anim-knee-flex {
+            0%, 100% { transform: rotate(5deg); }
+            50% { transform: rotate(-20deg); }
+        }
+        .swing-thigh-active {
+            transform-origin: 50px 55px;
+            animation: anim-hip-swing 1.4s ease-in-out infinite alternate;
+        }
+        .swing-calf-active {
+            transform-origin: 50px 80px;
+            animation: anim-knee-flex 1.4s ease-in-out infinite alternate;
+        }
+
+        /* 2. High Knees (Realistic running biomechanics) */
+        @keyframes anim-hk-body {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        @keyframes anim-hk-left-thigh {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(-65deg); }
+        }
+        @keyframes anim-hk-left-calf {
+            0%, 100% { transform: rotate(10deg); }
+            50% { transform: rotate(45deg); }
+        }
+        @keyframes anim-hk-right-thigh {
+            0%, 100% { transform: rotate(-60deg); }
+            50% { transform: rotate(-10deg); }
+        }
+        @keyframes anim-hk-right-calf {
+            0%, 100% { transform: rotate(40deg); }
+            50% { transform: rotate(10deg); }
+        }
+        .hk-left-thigh {
+            transform-origin: 48px 55px;
+            animation: anim-hk-left-thigh 0.8s ease-in-out infinite;
+        }
+        .hk-left-calf {
+            transform-origin: 48px 78px;
+            animation: anim-hk-left-calf 0.8s ease-in-out infinite;
+        }
+        .hk-right-thigh {
+            transform-origin: 52px 55px;
+            animation: anim-hk-right-thigh 0.8s ease-in-out infinite;
+            animation-delay: 0.4s;
+        }
+        .hk-right-calf {
+            transform-origin: 52px 78px;
+            animation: anim-hk-right-calf 0.8s ease-in-out infinite;
             animation-delay: 0.4s;
         }
 
-        /* 3. Butt Kicks */
-        @keyframes anim-butt-kick-left {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(80deg); }
+        /* 3. Butt Kicks (Fast knee hinge) */
+        @keyframes anim-bk-left-thigh {
+            0%, 100% { transform: rotate(5deg); }
+            50% { transform: rotate(-15deg); }
         }
-        @keyframes anim-butt-kick-right {
+        @keyframes anim-bk-left-calf {
             0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(80deg); }
+            50% { transform: rotate(95deg); }
+        }
+        @keyframes anim-bk-right-thigh {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(5deg); }
+        }
+        @keyframes anim-bk-right-calf {
+            0%, 100% { transform: rotate(95deg); }
+            50% { transform: rotate(0deg); }
+        }
+        .bk-left-thigh {
+            transform-origin: 48px 55px;
+            animation: anim-bk-left-thigh 0.7s ease-in-out infinite;
         }
         .bk-left-calf {
-            transform-origin: 45px 90px;
-            animation: anim-butt-kick-left 0.7s ease-in-out infinite;
+            transform-origin: 48px 78px;
+            animation: anim-bk-left-calf 0.7s ease-in-out infinite;
+        }
+        .bk-right-thigh {
+            transform-origin: 52px 55px;
+            animation: anim-bk-right-thigh 0.7s ease-in-out infinite;
+            animation-delay: 0.35s;
         }
         .bk-right-calf {
-            transform-origin: 55px 90px;
-            animation: anim-butt-kick-right 0.7s ease-in-out infinite;
+            transform-origin: 52px 78px;
+            animation: anim-bk-right-calf 0.7s ease-in-out infinite;
             animation-delay: 0.35s;
         }
 
-        /* 4. Walking Lunges */
-        @keyframes anim-lunge {
-            0%, 100% { transform: translateY(0) scaleY(1); }
-            50% { transform: translateY(12px) scaleY(0.85); }
+        /* 4. Walking Lunges (Deep compression & joint tracking) */
+        @keyframes anim-lunge-compress {
+            0%, 100% { transform: translateY(-3px); }
+            50% { transform: translateY(16px); }
         }
-        .lunge-body {
-            transform-origin: 50px 110px;
-            animation: anim-lunge 1.8s ease-in-out infinite;
+        @keyframes anim-lunge-front-calf {
+            0%, 100% { transform: rotate(5deg); }
+            50% { transform: rotate(-35deg); }
         }
-
-        /* 5. Calf Stretch */
-        @keyframes anim-calf-lean {
+        @keyframes anim-lunge-back-thigh {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(40deg); }
+        }
+        @keyframes anim-lunge-back-calf {
             0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-4deg); }
+            50% { transform: rotate(60deg); }
         }
-        .calf-stretch-body {
-            transform-origin: 40px 110px;
-            animation: anim-calf-lean 2s ease-in-out infinite;
+        .lunge-hip-joint {
+            animation: anim-lunge-compress 2.2s ease-in-out infinite;
+        }
+        .lunge-front-calf {
+            transform-origin: 65px 72px;
+            animation: anim-lunge-front-calf 2.2s ease-in-out infinite;
+        }
+        .lunge-back-thigh {
+            transform-origin: 46px 55px;
+            animation: anim-lunge-back-thigh 2.2s ease-in-out infinite;
+        }
+        .lunge-back-calf {
+            transform-origin: 38px 75px;
+            animation: anim-lunge-back-calf 2.2s ease-in-out infinite;
         }
 
-        /* 6. Quad Stretch */
-        @keyframes anim-quad-balance {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
+        /* 5. Calf Stretch (Continuous Wall Lean) */
+        @keyframes anim-calf-stretch-pulse {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            50% { transform: translateX(2px) rotate(-1.5deg); }
         }
-        .quad-stretch-body {
-            animation: anim-quad-balance 1.5s ease-in-out infinite;
+        .calf-body-lean {
+            transform-origin: 35px 105px;
+            animation: anim-calf-stretch-pulse 2.5s ease-in-out infinite;
         }
 
-        /* 7. Hamstring Fold */
-        @keyframes anim-hamstring-fold {
+        /* 6. Quad Stretch (Balancing torso and locked knee) */
+        @keyframes anim-quad-stretch-balance {
+            0%, 100% { transform: rotate(0.8deg) translateY(0); }
+            50% { transform: rotate(-0.8deg) translateY(-2px); }
+        }
+        .quad-body-balance {
+            transform-origin: 50px 105px;
+            animation: anim-quad-stretch-balance 2s ease-in-out infinite;
+        }
+
+        /* 7. Hamstring Fold (Deep Hip Hinge) */
+        @keyframes anim-hamstring-hinge {
             0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(15deg); }
+            50% { transform: rotate(48deg); }
         }
-        .hamstring-fold-body {
-            transform-origin: 50px 75px;
-            animation: anim-hamstring-fold 2.5s ease-in-out infinite;
+        .hamstring-body-hinge {
+            transform-origin: 50px 55px;
+            animation: anim-hamstring-hinge 2.8s ease-in-out infinite;
         }
 
-        /* 8. Shoulder/Arm Stretch */
-        @keyframes anim-arm-pull {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(-4px); }
+        /* 8. Shoulder Stretch (Cross-arm compression) */
+        @keyframes anim-shoulder-stretch-pull {
+            0%, 100% { transform: scaleX(1); }
+            50% { transform: scaleX(0.94); }
         }
-        .arm-pull-active {
-            animation: anim-arm-pull 1.6s ease-in-out infinite;
+        .shoulder-compression {
+            transform-origin: 50px 35px;
+            animation: anim-shoulder-stretch-pull 2s ease-in-out infinite;
         }
     </style>
 </head>
@@ -1438,18 +1546,51 @@
                     desc: "Berdiri tegak dengan tumpuan salah satu kaki. Ayunkan satu kaki lainnya maju mundur secara lembut dan terkendali. Jaga tubuh bagian atas lurus.",
                     key: "Melenturkan persendian pinggul (hip flexors) agar stride langkah kaki lari lebih bebas & lebar.",
                     svg: `
-                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
-                        <line x1="20" y1="10" x2="20" y2="110" stroke="#475569" stroke-width="3" stroke-dasharray="3 3"/>
-                        <circle cx="50" cy="20" r="7" fill="currentColor"/>
-                        <line x1="50" y1="27" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-                        <line x1="50" y1="35" x2="25" y2="40" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
-                        <!-- Support Leg -->
-                        <line x1="50" y1="75" x2="45" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                        <!-- Swinging Leg -->
-                        <g class="swing-leg-active">
-                            <line x1="50" y1="75" x2="50" y2="108" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                            <circle cx="50" cy="108" r="2.5" fill="#FF5722"/>
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-300" viewBox="0 0 100 120">
+                        <defs>
+                            <radialGradient id="joint-glow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#FF5722" stop-opacity="1"/>
+                                <stop offset="100%" stop-color="#FF5722" stop-opacity="0"/>
+                            </radialGradient>
+                            <linearGradient id="muscle-volt" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ADFF2F" stop-opacity="0.8"/>
+                                <stop offset="100%" stop-color="#10B981" stop-opacity="0.2"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Biomechanical Coordinate HUD -->
+                        <circle cx="50" cy="55" r="42" fill="none" stroke="rgba(255, 87, 34, 0.15)" stroke-width="1" stroke-dasharray="2 4"/>
+                        <path d="M 50,10 L 50,110 M 10,55 L 90,55" stroke="rgba(71, 85, 105, 0.15)" stroke-width="0.5"/>
+                        
+                        <!-- Torso & Head -->
+                        <line x1="50" y1="20" x2="50" y2="55" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                        <circle cx="50" cy="12" r="6" fill="currentColor"/>
+                        <!-- Arm (Balance) -->
+                        <line x1="50" y1="26" x2="30" y2="35" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                        
+                        <!-- Support Leg (Static) -->
+                        <line x1="50" y1="55" x2="45" y2="82" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" opacity="0.4"/>
+                        <line x1="45" y1="82" x2="42" y2="108" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
+                        
+                        <!-- SWINGING LEG ASSEMBLY -->
+                        <g class="swing-thigh-active">
+                            <!-- Thigh Bone -->
+                            <line x1="50" y1="55" x2="50" y2="80" stroke="#FF5722" stroke-width="5" stroke-linecap="round"/>
+                            <!-- Glutes & Hip Flexor Target Muscle Zone -->
+                            <path class="muscle-target-active" d="M 46,55 Q 38,68 50,75 Z" fill="url(#muscle-volt)"/>
+                            
+                            <g class="swing-calf-active">
+                                <!-- Calf Bone -->
+                                <line x1="50" y1="80" x2="52" y2="105" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                                <!-- Foot -->
+                                <line x1="52" y1="105" x2="59" y2="107" stroke="#FF5722" stroke-width="3.5" stroke-linecap="round"/>
+                                <!-- Knee Joint Node -->
+                                <circle cx="50" cy="80" r="3" fill="#ADFF2F"/>
+                            </g>
                         </g>
+
+                        <!-- Glowing Active Joints -->
+                        <circle cx="50" cy="55" r="4.5" fill="#FF5722"/>
+                        <circle cx="50" cy="55" r="10" fill="url(#joint-glow)" opacity="0.6"/>
                     </svg>`
                 },
                 {
@@ -1459,18 +1600,53 @@
                     desc: "Lakukan gerakan setengah joging di tempat dengan mengangkat lutut setinggi pinggang secara bergantian cepat. Ayunkan lengan seirama.",
                     key: "Meningkatkan sirkulasi darah serta melatih otot paha depan (quadriceps) & betis secara dinamis.",
                     svg: `
-                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
-                        <circle cx="50" cy="22" r="7" fill="currentColor"/>
-                        <line x1="50" y1="29" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-                        <!-- Left High Knee -->
-                        <g class="hk-left-leg">
-                            <line x1="45" y1="75" x2="25" y2="75" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                            <line x1="25" y1="75" x2="25" y2="100" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                        </g>
-                        <!-- Right High Knee -->
-                        <g class="hk-right-leg">
-                            <line x1="55" y1="75" x2="75" y2="75" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                            <line x1="75" y1="75" x2="75" y2="100" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-300" viewBox="0 0 100 120">
+                        <defs>
+                            <radialGradient id="joint-glow-green" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#ADFF2F" stop-opacity="1"/>
+                                <stop offset="100%" stop-color="#ADFF2F" stop-opacity="0"/>
+                            </radialGradient>
+                            <linearGradient id="quad-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FF5722" stop-opacity="0.8"/>
+                                <stop offset="100%" stop-color="#FF5722" stop-opacity="0.15"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Angle Guide -->
+                        <path d="M 48,55 L 85,55" stroke="rgba(255, 87, 34, 0.2)" stroke-width="1" stroke-dasharray="2 2"/>
+                        
+                        <!-- Main Body -->
+                        <g style="animation: anim-hk-body 0.4s ease-in-out infinite alternate;">
+                            <circle cx="50" cy="14" r="6" fill="currentColor"/>
+                            <line x1="50" y1="21" x2="50" y2="55" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                            <!-- Arms swinging -->
+                            <line x1="50" y1="27" x2="68" y2="38" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" style="animation: anim-hk-left-thigh 0.8s ease-in-out infinite; transform-origin: 50px 27px;"/>
+                            <line x1="50" y1="27" x2="32" y2="38" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" style="animation: anim-hk-right-thigh 0.8s ease-in-out infinite; transform-origin: 50px 27px;"/>
+                            
+                            <!-- LEFT LEG SYSTEM -->
+                            <g class="hk-left-thigh">
+                                <line x1="48" y1="55" x2="48" y2="78" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" opacity="0.4"/>
+                                <g class="hk-left-calf">
+                                    <line x1="48" y1="78" x2="48" y2="102" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
+                                    <circle cx="48" cy="78" r="2.5" fill="currentColor" opacity="0.4"/>
+                                </g>
+                            </g>
+                            
+                            <!-- RIGHT ACTIVE LEG SYSTEM (Glowing neon) -->
+                            <g class="hk-right-thigh">
+                                <!-- Thigh -->
+                                <line x1="52" y1="55" x2="52" y2="78" stroke="#ADFF2F" stroke-width="5" stroke-linecap="round"/>
+                                <!-- Quad Stress indicator -->
+                                <path class="muscle-target-active" d="M 52,55 Q 65,60 52,75 Z" fill="url(#quad-glow)"/>
+                                <g class="hk-right-calf">
+                                    <!-- Calf -->
+                                    <line x1="52" y1="78" x2="52" y2="102" stroke="#ADFF2F" stroke-width="4.5" stroke-linecap="round"/>
+                                    <!-- Foot -->
+                                    <line x1="52" y1="102" x2="60" y2="104" stroke="#ADFF2F" stroke-width="3.5" stroke-linecap="round"/>
+                                    <!-- Knee Joint -->
+                                    <circle cx="52" cy="78" r="3.5" fill="#FF5722"/>
+                                    <circle cx="52" cy="78" r="8" fill="url(#joint-glow-green)" opacity="0.5"/>
+                                </g>
+                            </g>
                         </g>
                     </svg>`
                 },
@@ -1481,18 +1657,49 @@
                     desc: "Joging santai di tempat, tekuk lutut ke belakang hingga tumit mendekati atau menyentuh bokong Anda secara bergantian.",
                     key: "Meregangkan paha depan secara aktif & mempersiapkan otot hamstring menghadapi tekanan tinggi.",
                     svg: `
-                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
-                        <circle cx="50" cy="22" r="7" fill="currentColor"/>
-                        <line x1="50" y1="29" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-                        <!-- Left Knee static down -->
-                        <line x1="45" y1="75" x2="45" y2="90" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                        <g class="bk-left-calf">
-                            <line x1="45" y1="90" x2="45" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-300" viewBox="0 0 100 120">
+                        <defs>
+                            <radialGradient id="joint-glow-orange" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#FF5722" stop-opacity="1"/>
+                                <stop offset="100%" stop-color="#FF5722" stop-opacity="0"/>
+                            </radialGradient>
+                            <linearGradient id="hamstring-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ADFF2F" stop-opacity="0.8"/>
+                                <stop offset="100%" stop-color="#ADFF2F" stop-opacity="0.1"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Range Limit Arc -->
+                        <path d="M 52,78 A 20,20 0 0,1 68,90" fill="none" stroke="rgba(173, 255, 47, 0.15)" stroke-width="1.5" stroke-dasharray="2 3"/>
+
+                        <!-- Main Torso -->
+                        <circle cx="50" cy="14" r="6" fill="currentColor"/>
+                        <line x1="50" y1="21" x2="50" y2="55" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                        
+                        <!-- LEFT INACTIVE LEG -->
+                        <g class="bk-left-thigh">
+                            <line x1="48" y1="55" x2="48" y2="78" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" opacity="0.4"/>
+                            <g class="bk-left-calf">
+                                <line x1="48" y1="78" x2="48" y2="102" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
+                                <circle cx="48" cy="78" r="2.5" fill="currentColor" opacity="0.4"/>
+                            </g>
                         </g>
-                        <!-- Right Knee bent backward -->
-                        <line x1="55" y1="75" x2="55" y2="90" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                        <g class="bk-right-calf">
-                            <line x1="55" y1="90" x2="70" y2="80" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
+
+                        <!-- RIGHT ACTIVE BENT LEG -->
+                        <g class="bk-right-thigh">
+                            <!-- Thigh -->
+                            <line x1="52" y1="55" x2="52" y2="78" stroke="#ADFF2F" stroke-width="5" stroke-linecap="round"/>
+                            <!-- Hamstring stretch area highlighted -->
+                            <path class="muscle-target-active" d="M 52,55 Q 44,68 52,78 Z" fill="url(#hamstring-glow)"/>
+                            
+                            <g class="bk-right-calf">
+                                <!-- Bent Calf -->
+                                <line x1="52" y1="78" x2="70" y2="68" stroke="#ADFF2F" stroke-width="4.5" stroke-linecap="round"/>
+                                <!-- Foot reaching glutes -->
+                                <line x1="70" y1="68" x2="72" y2="60" stroke="#ADFF2F" stroke-width="3.5" stroke-linecap="round"/>
+                                
+                                <circle cx="52" cy="78" r="3.5" fill="#FF5722"/>
+                                <circle cx="52" cy="78" r="9" fill="url(#joint-glow-orange)" opacity="0.6"/>
+                            </g>
                         </g>
                     </svg>`
                 },
@@ -1503,15 +1710,42 @@
                     desc: "Langkahkan kaki jauh ke depan, lalu turunkan pinggul hingga lutut belakang hampir menyentuh lantai. Berdiri kembali dan ulangi kaki depan.",
                     key: "Membangun stabilitas sendi lutut, otot bokong (glutes), & koordinasi keseimbangan lari.",
                     svg: `
-                    <svg class="w-full h-full text-slate-800 dark:text-slate-200 animate-[anim-lunge_1.8s_ease-in-out_infinite]" viewBox="0 0 100 120">
-                        <circle cx="50" cy="25" r="7" fill="currentColor"/>
-                        <line x1="50" y1="32" x2="50" y2="70" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-                        <!-- Lunging front Leg -->
-                        <line x1="50" y1="70" x2="70" y2="85" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                        <line x1="70" y1="85" x2="68" y2="110" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                        <!-- Back leg trailing -->
-                        <line x1="50" y1="70" x2="30" y2="85" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                        <line x1="30" y1="85" x2="15" y2="105" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-300" viewBox="0 0 100 120">
+                        <defs>
+                            <linearGradient id="lunge-quad-strain" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FF5722" stop-opacity="0.9"/>
+                                <stop offset="100%" stop-color="#ADFF2F" stop-opacity="0.2"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Ground Plane -->
+                        <line x1="10" y1="108" x2="90" y2="108" stroke="rgba(71, 85, 105, 0.3)" stroke-width="1.5"/>
+
+                        <g class="lunge-hip-joint">
+                            <!-- Upper Body -->
+                            <circle cx="50" cy="18" r="6" fill="currentColor"/>
+                            <line x1="50" y1="25" x2="50" y2="55" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                            <line x1="50" y1="30" x2="35" y2="45" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+
+                            <!-- FRONT COMPRESSED LEG -->
+                            <line x1="50" y1="55" x2="65" y2="72" stroke="#FF5722" stroke-width="5" stroke-linecap="round"/>
+                            <!-- Deep Quads Compression Heatmap -->
+                            <path class="muscle-target-active" d="M 50,55 Q 60,60 65,72 Z" fill="url(#lunge-quad-strain)"/>
+                            <g class="lunge-front-calf">
+                                <line x1="65" y1="72" x2="63" y2="108" stroke="#FF5722" stroke-width="4.5" stroke-linecap="round"/>
+                                <line x1="63" y1="108" x2="72" y2="108" stroke="#FF5722" stroke-width="3.5" stroke-linecap="round"/>
+                                <circle cx="65" cy="72" r="3.5" fill="#ADFF2F"/>
+                            </g>
+
+                            <!-- BACK TRAILING LEG -->
+                            <g class="lunge-back-thigh">
+                                <line x1="50" y1="55" x2="38" y2="75" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" opacity="0.4"/>
+                                <g class="lunge-back-calf">
+                                    <line x1="38" y1="75" x2="22" y2="92" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
+                                    <line x1="22" y1="92" x2="15" y2="108" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" opacity="0.4"/>
+                                    <circle cx="38" cy="75" r="2.5" fill="currentColor" opacity="0.4"/>
+                                </g>
+                            </g>
+                        </g>
                     </svg>`
                 }
             ],
@@ -1523,18 +1757,33 @@
                     desc: "Julurkan satu kaki lurus ke belakang dengan tumit menempel di tanah, tekuk kaki depan dan condongkan badan ke depan sampai betis belakang tegang.",
                     key: "Menghilangkan kekakuan otot betis pasca-lari untuk mencegah kram malam & Achilles Tendonitis.",
                     svg: `
-                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
-                        <line x1="80" y1="10" x2="80" y2="110" stroke="#475569" stroke-width="3" stroke-dasharray="3 3"/>
-                        <g class="calf-stretch-body">
-                            <circle cx="45" cy="22" r="7" fill="currentColor"/>
-                            <line x1="45" y1="29" x2="45" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-                            <!-- Hands pushing the wall -->
-                            <line x1="45" y1="38" x2="80" y2="38" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                            <!-- Rear leg stretching -->
-                            <line x1="45" y1="75" x2="15" y2="110" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                            <!-- Front bent leg -->
-                            <line x1="45" y1="75" x2="55" y2="90" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                            <line x1="55" y1="90" x2="50" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-300" viewBox="0 0 100 120">
+                        <defs>
+                            <linearGradient id="calf-strain-neon" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ADFF2F" stop-opacity="0.95"/>
+                                <stop offset="100%" stop-color="#FF5722" stop-opacity="0.2"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Support Wall (Hologram Guide) -->
+                        <line x1="82" y1="10" x2="82" y2="110" stroke="rgba(255, 87, 34, 0.25)" stroke-width="2" stroke-dasharray="3 3"/>
+                        <line x1="20" y1="108" x2="90" y2="108" stroke="rgba(71, 85, 105, 0.3)" stroke-width="1"/>
+
+                        <g class="calf-body-lean">
+                            <circle cx="42" cy="20" r="6" fill="currentColor"/>
+                            <line x1="42" y1="27" x2="42" y2="72" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                            <!-- Arms pushing Wall -->
+                            <line x1="42" y1="36" x2="82" y2="36" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+
+                            <!-- Front Compressed Leg -->
+                            <line x1="42" y1="72" x2="55" y2="88" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" opacity="0.4"/>
+                            <line x1="55" y1="88" x2="50" y2="108" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
+
+                            <!-- BACK REAR STRETCHING LEG (Target Zone) -->
+                            <line x1="42" y1="72" x2="18" y2="108" stroke="#ADFF2F" stroke-width="5" stroke-linecap="round"/>
+                            <!-- Calf Muscle Heatmap -->
+                            <path class="muscle-target-active" d="M 32,86 Q 22,96 25,104 Z" fill="url(#calf-strain-neon)"/>
+                            <!-- Hip Joint Node -->
+                            <circle cx="42" cy="72" r="3.5" fill="#FF5722"/>
                         </g>
                     </svg>`
                 },
@@ -1545,17 +1794,38 @@
                     desc: "Berdiri seimbang pada satu kaki. Tekuk kaki satunya ke belakang, pegang pergelangan kakinya dengan tangan, lalu tarik mendekati bokong Anda.",
                     key: "Melemaskan otot paha depan (quadriceps) yang mengalami ketegangan konstan selama hentakan lari.",
                     svg: `
-                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
-                        <g class="quad-stretch-body">
-                            <circle cx="50" cy="22" r="7" fill="currentColor"/>
-                            <line x1="50" y1="29" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-                            <!-- Support leg -->
-                            <line x1="50" y1="75" x2="50" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                            <!-- Bent leg held by hand -->
-                            <line x1="50" y1="75" x2="40" y2="95" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                            <line x1="40" y1="95" x2="33" y2="75" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                            <!-- Arm holding the leg -->
-                            <line x1="50" y1="35" x2="33" y2="75" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-300" viewBox="0 0 100 120">
+                        <defs>
+                            <linearGradient id="quad-tension-glow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#FF5722" stop-opacity="0.9"/>
+                                <stop offset="100%" stop-color="#ADFF2F" stop-opacity="0.2"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Verticle Balance Line -->
+                        <line x1="50" y1="10" x2="50" y2="110" stroke="rgba(173, 255, 47, 0.08)" stroke-width="1" stroke-dasharray="4 4"/>
+
+                        <g class="quad-body-balance">
+                            <!-- Upper torso -->
+                            <circle cx="50" cy="18" r="6" fill="currentColor"/>
+                            <line x1="50" y1="25" x2="50" y2="70" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                            
+                            <!-- Support Ground Leg -->
+                            <line x1="50" y1="70" x2="50" y2="108" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+
+                            <!-- BACK BENT STRETCHED LEG -->
+                            <!-- Thigh -->
+                            <line x1="50" y1="70" x2="42" y2="92" stroke="#FF5722" stroke-width="5" stroke-linecap="round"/>
+                            <!-- Quadriceps High Tension Zone -->
+                            <path class="muscle-target-active" d="M 50,70 Q 40,82 42,92 Z" fill="url(#quad-tension-glow)"/>
+                            <!-- Calf locked back -->
+                            <line x1="42" y1="92" x2="33" y2="72" stroke="#FF5722" stroke-width="4.5" stroke-linecap="round"/>
+                            
+                            <!-- Arm pulling leg -->
+                            <line x1="50" y1="32" x2="33" y2="72" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            
+                            <!-- Knees Alignment Circle Indicator -->
+                            <circle cx="42" cy="92" r="3" fill="#ADFF2F"/>
+                            <circle cx="50" cy="70" r="3.5" fill="#FF5722"/>
                         </g>
                     </svg>`
                 },
@@ -1566,17 +1836,35 @@
                     desc: "Silangkan kaki atau buka selebar bahu. Lipat tubuh bagian atas ke depan ke bawah perlahan, usahakan tangan menyentuh lantai tanpa menekuk lutut.",
                     key: "Meredakan ketegangan paha belakang (hamstring) & merelaksasikan otot-otot punggung bawah.",
                     svg: `
-                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
-                        <!-- Straight legs -->
-                        <line x1="45" y1="75" x2="45" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                        <line x1="55" y1="75" x2="55" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                        <!-- Folded upper body -->
-                        <g class="hamstring-fold-body">
-                            <line x1="50" y1="75" x2="50" y2="35" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                            <circle cx="50" cy="27" r="7" fill="#FF5722"/>
-                            <!-- Dangling arms -->
-                            <line x1="50" y1="42" x2="35" y2="70" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-300" viewBox="0 0 100 120">
+                        <defs>
+                            <linearGradient id="ham-stretch-neon" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ADFF2F" stop-opacity="0.95"/>
+                                <stop offset="100%" stop-color="#FF5722" stop-opacity="0.2"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Dynamic Hinge Arc -->
+                        <path d="M 50,22 A 35,35 0 0,1 25,58" fill="none" stroke="rgba(255, 87, 34, 0.2)" stroke-width="1.5" stroke-dasharray="2 3"/>
+                        <line x1="10" y1="108" x2="90" y2="108" stroke="rgba(71, 85, 105, 0.3)" stroke-width="1.5"/>
+
+                        <!-- Locked straight legs -->
+                        <line x1="47" y1="72" x2="45" y2="108" stroke="#ADFF2F" stroke-width="4.5" stroke-linecap="round"/>
+                        <line x1="53" y1="72" x2="55" y2="108" stroke="#ADFF2F" stroke-width="4.5" stroke-linecap="round"/>
+                        
+                        <!-- Hamstring active stretching heatwave -->
+                        <path class="muscle-target-active" d="M 47,72 Q 40,88 45,108 Z" fill="url(#ham-stretch-neon)"/>
+                        <path class="muscle-target-active" d="M 53,72 Q 60,88 55,108 Z" fill="url(#ham-stretch-neon)"/>
+
+                        <!-- Hinging upper body -->
+                        <g class="hamstring-body-hinge">
+                            <!-- Spine bone bending -->
+                            <line x1="50" y1="72" x2="50" y2="35" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="50" cy="27" r="6" fill="currentColor"/>
+                            <!-- Dangling Arms stretching down -->
+                            <line x1="50" y1="40" x2="35" y2="68" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
                         </g>
+                        <!-- Hip joint hinge focal point -->
+                        <circle cx="50" cy="72" r="3.5" fill="#FF5722"/>
                     </svg>`
                 },
                 {
@@ -1586,18 +1874,33 @@
                     desc: "Tarik satu lengan lurus menyilang di depan dada Anda, gunakan tangan satunya untuk mengunci & menekan dekat ke bahu Anda.",
                     key: "Mengurangi ketegangan area bahu, belikat, & punggung atas akibat mengayun lengan terus menerus.",
                     svg: `
-                    <svg class="w-full h-full text-slate-800 dark:text-slate-200" viewBox="0 0 100 120">
-                        <circle cx="50" cy="22" r="7" fill="currentColor"/>
-                        <line x1="50" y1="29" x2="50" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-                        <!-- Stand legs -->
-                        <line x1="45" y1="75" x2="42" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                        <line x1="55" y1="75" x2="58" y2="110" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-                        <!-- Arms crossing with active pull animation -->
-                        <g class="arm-pull-active">
-                            <!-- Crossed arm -->
-                            <line x1="50" y1="35" x2="15" y2="35" stroke="#FF5722" stroke-width="4" stroke-linecap="round"/>
-                            <!-- Pulling arm locking it -->
-                            <line x1="30" y1="45" x2="30" y2="25" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                    <svg class="w-full h-full text-slate-800 dark:text-slate-300" viewBox="0 0 100 120">
+                        <defs>
+                            <linearGradient id="shoulder-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#FF5722" stop-opacity="0.9"/>
+                                <stop offset="100%" stop-color="#FF5722" stop-opacity="0.1"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Torso Base & Legs -->
+                        <circle cx="50" cy="20" r="6" fill="currentColor"/>
+                        <line x1="50" y1="27" x2="50" y2="72" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                        <line x1="50" y1="72" x2="42" y2="108" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" opacity="0.4"/>
+                        <line x1="50" y1="72" x2="58" y2="108" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" opacity="0.4"/>
+
+                        <!-- SHOULDERS STRETCH SYSTEM -->
+                        <g class="shoulder-compression">
+                            <!-- Deltoid targeted muscle area -->
+                            <ellipse cx="50" cy="35" rx="8" ry="4" fill="url(#shoulder-glow)" class="muscle-target-active"/>
+                            
+                            <!-- Straight crossed arm -->
+                            <line x1="50" y1="34" x2="15" y2="34" stroke="#ADFF2F" stroke-width="4.5" stroke-linecap="round"/>
+                            
+                            <!-- Locking vertical forearm -->
+                            <line x1="30" y1="46" x2="30" y2="22" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                            
+                            <!-- Active Shoulder Node -->
+                            <circle cx="50" cy="34" r="3.5" fill="#FF5722"/>
+                            <circle cx="30" cy="34" r="2.5" fill="#ADFF2F"/>
                         </g>
                     </svg>`
                 }
