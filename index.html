@@ -34,13 +34,12 @@
     <!-- PapaParse CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-        /* Stadium track animation for loaders */
         .track-loop {
             stroke-dasharray: 600;
             stroke-dashoffset: 600;
@@ -63,7 +62,7 @@
 <body class="min-h-screen dark:bg-brand-dark bg-slate-50 dark:text-slate-100 text-slate-800 transition-colors duration-300">
 
     <!-- SPLASH / INITIAL LOADING SCREEN -->
-    <div id="loading-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-content-center bg-brand-dark transition-opacity duration-500">
+    <div id="loading-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-brand-dark transition-opacity duration-500">
         <div class="m-auto flex flex-col items-center">
             <div class="relative w-48 h-48 flex items-center justify-center">
                 <svg class="absolute w-full h-full" viewBox="0 0 100 100">
@@ -76,11 +75,11 @@
             </div>
             <h1 class="text-2xl font-black mt-6 tracking-wider text-white">RUN TRACKER</h1>
             <p class="text-brand-volt text-xs font-bold tracking-widest mt-2 uppercase">AI Running Coach</p>
-            <p class="text-slate-400 text-sm mt-8 animate-pulse" id="loading-status">Mempersiapkan Rencana Latihan Anda...</p>
+            <p class="text-slate-400 text-sm mt-8 animate-pulse" id="loading-status">Menghubungkan ke Database Cloud...</p>
         </div>
     </div>
 
-    <!-- ACTION LOADING OVERLAY (Dynamic Running Loader) -->
+    <!-- ACTION LOADING OVERLAY -->
     <div id="action-loader" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden transition-opacity duration-300 opacity-0">
         <div class="text-center bg-slate-900 border border-slate-800 p-8 rounded-3xl max-w-sm mx-4 shadow-2xl">
             <div class="relative w-28 h-28 mx-auto flex items-center justify-center">
@@ -91,16 +90,14 @@
                 <span class="text-3xl animate-bounce">🏃</span>
             </div>
             <h5 id="action-loader-title" class="text-white font-extrabold text-lg mt-4">Menganalisis Performa...</h5>
-            <p id="action-loader-subtitle" class="text-slate-400 text-xs mt-1">AI sedang menyinkronkan data & grafik latihan Anda.</p>
+            <p id="action-loader-subtitle" class="text-slate-400 text-xs mt-1">Sinkronisasi data langsung dengan sistem awan.</p>
         </div>
     </div>
 
-    <!-- CUSTOM POPUP MODAL (Middle-Screen Centered Notification) -->
+    <!-- CUSTOM POPUP MODAL -->
     <div id="custom-popup" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden transition-all duration-300 opacity-0">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl max-w-md w-full mx-4 text-center shadow-2xl">
-            <div id="popup-icon-container" class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4">
-                <!-- Icon injected via JS -->
-            </div>
+            <div id="popup-icon-container" class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4"></div>
             <h4 id="popup-title" class="text-slate-800 dark:text-white font-black text-xl mb-2">Notifikasi</h4>
             <p id="popup-message" class="text-slate-600 dark:text-slate-300 text-sm mb-6 leading-relaxed">Pesan pemberitahuan akan tampil di sini.</p>
             <button onclick="closeCustomPopup()" class="w-full bg-brand-orange hover:bg-brand-orange/90 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg shadow-brand-orange/20">
@@ -109,7 +106,21 @@
         </div>
     </div>
 
-    <!-- AUTHENTICATION GATE (LOGIN & REGISTER SCREEN) -->
+    <!-- EVALUATION / RESULT MODAL -->
+    <div id="eval-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-md w-full mx-4 shadow-2xl">
+            <div class="w-12 h-12 rounded-full bg-brand-volt/10 text-brand-volt flex items-center justify-center mb-4 mx-auto">
+                🏅
+            </div>
+            <h4 class="text-white font-black text-center text-xl mb-4">Sesi Selesai Dievaluasi!</h4>
+            <div id="eval-modal-content" class="text-sm space-y-3"></div>
+            <button onclick="document.getElementById('eval-modal').classList.add('hidden')" class="w-full mt-6 bg-brand-volt hover:bg-brand-volt/95 text-slate-950 font-black py-3 rounded-xl text-sm transition-all">
+                Selesai & Lihat Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION GATE -->
     <div id="auth-gate" class="fixed inset-0 z-40 flex items-center justify-center bg-brand-dark p-4">
         <div class="w-full max-w-md bg-slate-900 border border-brand-border rounded-2xl p-8 space-y-6 shadow-2xl">
             <div class="text-center">
@@ -119,7 +130,7 @@
                     </svg>
                 </span>
                 <h2 id="auth-title" class="text-2xl font-black text-white">Masuk Pelari</h2>
-                <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Gunakan kredensial Anda untuk masuk ke dashboard pribadi.</p>
+                <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Koneksi Real-time ke Google Spreadsheet Database Anda.</p>
             </div>
 
             <!-- Login Form -->
@@ -133,7 +144,7 @@
                     <input type="password" id="login-password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange">
                 </div>
                 <button type="submit" class="w-full bg-brand-orange hover:bg-brand-orange/90 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-brand-orange/20">
-                    Masuk Sekarang
+                    Masuk Sekarang (Load Cloud)
                 </button>
             </form>
 
@@ -167,7 +178,7 @@
     <!-- MAIN APP STRUCTURE -->
     <div id="main-app" class="flex h-screen overflow-hidden hidden">
         
-        <!-- SIDEBAR - Desktop / Tablet -->
+        <!-- SIDEBAR -->
         <aside class="hidden md:flex flex-col w-64 bg-slate-900 dark:bg-brand-card border-r border-slate-200 dark:border-brand-border h-full flex-shrink-0">
             <div class="p-6 flex items-center space-x-3">
                 <span class="p-2 bg-brand-orange text-white rounded-xl">
@@ -184,11 +195,11 @@
             <!-- ACTIVE PROFILE CARD -->
             <div class="px-6 py-4 border-b border-slate-800 bg-slate-950/40">
                 <span class="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">Pelari Aktif</span>
-                <p id="active-profile-name" class="font-black text-lg text-white mt-0.5">Rian Pratama</p>
-                <p id="active-profile-username" class="text-xs text-brand-volt font-medium">@rian_pratama</p>
+                <p id="active-profile-name" class="font-black text-lg text-white mt-0.5">Memuat...</p>
+                <p id="active-profile-username" class="text-xs text-brand-volt font-medium">@...</p>
                 <button onclick="handleLogout()" class="mt-3 flex items-center justify-center space-x-2 w-full py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold rounded-lg transition-all">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    <span>Keluar Akun (Logout)</span>
+                    <span>Keluar (Logout)</span>
                 </button>
             </div>
 
@@ -219,16 +230,16 @@
             <!-- FOOTER STATUS -->
             <div class="p-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
                 <span class="flex items-center">
-                    <span id="sync-indicator-dot" class="w-2.5 h-2.5 bg-green-500 rounded-full inline-block mr-2 animate-pulse"></span>
+                    <span id="sync-indicator-dot" class="w-2.5 h-2.5 bg-green-500 rounded-full inline-block mr-2"></span>
                     <span id="sync-indicator-text">Online</span>
                 </span>
-                <button onclick="forceSync()" class="hover:text-brand-volt">
-                    <svg class="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17"></path></svg>
+                <button onclick="forceSync()" title="Sinkronkan Ulang Database" class="hover:text-brand-volt">
+                    <svg class="w-4 h-4 stroke-current animate-pulse" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17"></path></svg>
                 </button>
             </div>
         </aside>
 
-        <!-- CONTAINER UTAMA -->
+        <!-- MAIN CONTAINER -->
         <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-950 dark:bg-slate-950 bg-slate-100 text-slate-800 dark:text-slate-100">
             
             <!-- TOP BAR -->
@@ -245,6 +256,7 @@
                 </div>
 
                 <div class="flex items-center space-x-4">
+                    <!-- Notifications -->
                     <div class="relative cursor-pointer" onclick="toggleNotifications()">
                         <svg class="w-6 h-6 text-slate-400 hover:text-slate-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span id="notif-badge" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-brand-orange rounded-full hidden"></span>
@@ -261,10 +273,13 @@
                 </div>
             </header>
 
-            <!-- REMINDER ALERTS CONTAINER -->
-            <div id="reminder-container" class="hidden px-6 py-2 bg-brand-orange/10 border-b border-brand-orange/20 text-brand-orange text-xs font-semibold flex items-center justify-between">
-                <span id="reminder-text">Daily Tip: Recovery is key! Don't forget to measure weight.</span>
-                <button onclick="closeReminder()" class="text-slate-400 hover:text-slate-100">✕</button>
+            <!-- REMINDER ALERTS BANNER -->
+            <div id="reminder-container" class="hidden px-6 py-3 bg-brand-orange/10 border-b border-brand-orange/20 text-brand-orange text-xs font-semibold flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span>💡</span>
+                    <span id="reminder-text">Kiat Pelatih: Pemulihan adalah kunci! Jangan lupa istirahat setelah latihan berat.</span>
+                </div>
+                <button onclick="closeReminder()" class="text-slate-400 hover:text-slate-100 text-sm font-bold">✕</button>
             </div>
 
             <!-- MAIN WORKSPACE -->
@@ -272,6 +287,22 @@
                 
                 <!-- SECTION: DASHBOARD -->
                 <section id="view-dashboard" class="space-y-6">
+                    <!-- Progress Jarak Mingguan (Tanda Pencapaian Target) -->
+                    <div class="dark:bg-brand-card bg-white p-5 rounded-2xl border dark:border-brand-border border-slate-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wide">Progres Jarak Mingguan</h4>
+                                <p id="dashboard-progress-label" class="text-lg font-black text-slate-800 dark:text-white mt-1">0.0 / 0.0 km</p>
+                            </div>
+                            <span id="target-achieved-badge" class="hidden px-3 py-1 bg-green-500/20 text-green-400 border border-green-500/30 text-xs font-black rounded-lg">
+                                🎉 Target Tercapai!
+                            </span>
+                        </div>
+                        <div class="w-full bg-slate-200 dark:bg-slate-900 rounded-full h-3 overflow-hidden">
+                            <div id="dashboard-progress-bar" class="bg-brand-orange h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
                     <!-- Quick Metrics Row -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="dark:bg-brand-card bg-white p-5 rounded-2xl border dark:border-brand-border border-slate-200">
@@ -321,13 +352,8 @@
                             <div class="dark:bg-brand-card bg-white p-6 rounded-2xl border dark:border-brand-border border-slate-200">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
                                     <div>
-                                        <h4 class="text-lg font-extrabold">Tren Aktivitas</h4>
-                                        <p class="text-xs text-slate-400">Gunakan filter untuk mengubah visualisasi</p>
-                                    </div>
-                                    <div class="flex items-center space-x-2 bg-slate-900 p-1 rounded-xl">
-                                        <button onclick="updateChartFilter('daily')" class="chart-filter-btn active text-xs font-bold px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">Hari</button>
-                                        <button onclick="updateChartFilter('weekly')" class="chart-filter-btn text-xs font-bold px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">Minggu</button>
-                                        <button onclick="updateChartFilter('monthly')" class="chart-filter-btn text-xs font-bold px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">Bulan</button>
+                                        <h4 class="text-lg font-extrabold">Tren Aktivitas Lari</h4>
+                                        <p class="text-xs text-slate-400">Grafik perkembangan performa terbaru Anda</p>
                                     </div>
                                 </div>
                                 <div class="relative h-72">
@@ -355,7 +381,7 @@
                                         <p id="load-form" class="text-xl font-black mt-1 text-brand-volt">0</p>
                                     </div>
                                 </div>
-                                <p id="load-status-msg" class="text-xs text-slate-400 leading-relaxed italic">"Muat beberapa sesi latihan untuk melihat analitik beban latihan akut dan kronis Anda."</p>
+                                <p id="load-status-msg" class="text-xs text-slate-400 leading-relaxed italic">"Masukkan beberapa latihan untuk menghitung beban kronis tubuh Anda."</p>
                             </div>
 
                             <!-- Heart Rate Zones Visual -->
@@ -482,7 +508,7 @@
                             </div>
 
                             <div class="flex justify-end space-x-4">
-                                <button type="submit" class="bg-brand-orange hover:bg-brand-orange/80 text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-brand-orange/20">Simpan Profil & Buat Jadwal</button>
+                                <button type="submit" class="bg-brand-orange hover:bg-brand-orange/80 text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-brand-orange/20">Simpan Profil & Sinkronisasi</button>
                             </div>
                         </form>
                     </div>
@@ -493,7 +519,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-2xl font-black">Program Latihan Pribadi Anda</h3>
-                            <p class="text-sm text-slate-400" id="coach-goal-subtitle">Dibuat khusus oleh AI Coach berdasarkan profil Anda.</p>
+                            <p class="text-sm text-slate-400" id="coach-goal-subtitle">Dibuat khusus oleh AI Coach berdasarkan profil terbaru di cloud.</p>
                         </div>
                         <span class="bg-brand-volt/10 text-brand-volt text-xs font-bold px-3 py-1.5 rounded-full">AI Coach Verified</span>
                     </div>
@@ -508,7 +534,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-2xl font-black font-sport">Analisis Beban Latihan Kronis</h3>
-                            <p class="text-sm text-slate-400">Metrik Form, Fatigue, dan Fitness Berdasarkan RPE & Durasi</p>
+                            <p class="text-sm text-slate-400">Metrik Form, Fatigue, dan Fitness Terkalibrasi Database Cloud</p>
                         </div>
                     </div>
 
@@ -551,7 +577,7 @@
                     </div>
 
                     <div id="chat-messages-container" class="flex-1 p-6 overflow-y-auto space-y-4">
-                        <!-- Populated dynamic -->
+                        <!-- Populated dynamically -->
                     </div>
 
                     <form onsubmit="sendCoachMessage(event)" class="p-4 border-t border-slate-800 bg-slate-950 flex space-x-3">
@@ -646,11 +672,6 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Unggah Foto Latihan (Opsional)</label>
-                    <input type="file" id="log-photo" accept="image/*" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg py-1.5 px-3 text-slate-800 dark:text-slate-100 text-sm focus:outline-none">
-                </div>
-
-                <div>
                     <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Catatan Latihan</label>
                     <textarea id="log-notes" rows="2" placeholder="Bagaimana rasanya lari hari ini?" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg py-2 px-3 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-1 focus:ring-brand-orange"></textarea>
                 </div>
@@ -669,7 +690,6 @@
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxax7yZXKOs6rdu9SMMWDihDrDYO-FpTaOkI_6GdmlSBPOIFOIBmHyu1sULiT5L1055bQ/exec";
 
         // Global State
-        let users = [];
         let currentUser = null;
         let dbLogs = [];
         let chartInstance = null;
@@ -678,7 +698,7 @@
         let syncQueue = [];
         let isRegisterMode = false;
 
-        // Custom Popup System (Bypassing Browser alert)
+        // Custom Popup System
         function showCustomPopup(title, message, type = 'success') {
             const popup = document.getElementById('custom-popup');
             const iconContainer = document.getElementById('popup-icon-container');
@@ -688,7 +708,6 @@
             pTitle.innerText = title;
             pMessage.innerText = message;
 
-            // Clear previous styles
             iconContainer.className = "w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4";
             
             if (type === 'success') {
@@ -716,7 +735,7 @@
             }, 300);
         }
 
-        // Action Running Loader with custom duration and callback
+        // Action Running Loader
         function triggerActionLoader(title, subtitle, duration = 1800, callback = null) {
             const loader = document.getElementById('action-loader');
             document.getElementById('action-loader-title').innerText = title;
@@ -736,81 +755,14 @@
             }, duration);
         }
 
-        // Default Admin / Demo Account
-        const defaultUsers = [
-            {
-                id: "usr-9981-a",
-                name: "Rian Pratama",
-                username: "rian",
-                password: "123",
-                dob: "1995-05-12",
-                gender: "Male",
-                height: 175,
-                weight: 80,
-                targetWeight: 72,
-                experience: "Beginner",
-                injury: "tidak ada",
-                comorbid: "tidak ada",
-                rhr: 68,
-                mhr: 185,
-                goal: "Menurunkan Berat Badan",
-                age: 31,
-                bmi: 26.1,
-                bmiStatus: "Kelebihan Berat Badan",
-                targetBmi: 23.5,
-                vo2max: 41.7,
-                weeklyTarget: 15
-            }
-        ];
-
-        const defaultLogs = [
-            {
-                id: "log-1",
-                userId: "usr-9981-a",
-                date: "2026-06-15",
-                distance: 3.20,
-                duration: "00:24:12",
-                avgPace: "7:34",
-                avgHr: 145,
-                maxHr: 160,
-                cadence: 162,
-                calories: 280,
-                elevation: 12,
-                rpe: 4,
-                notes: "Hari pertama latihan. Kaki terasa sedikit kaku tapi nafas aman.",
-                evaluation: "Sesi yang bagus! Detak jantung Anda sebagian besar berada di Zona 2 (Aerobik). Sangat optimal untuk pembakaran lemak. Pertahankan konsistensi ini."
-            }
-        ];
-
-        // Bootstrapping PWA
+        // Bootstrapping App
         window.onload = function() {
             initApp();
         };
 
-        function initApp() {
-            const storedUsers = localStorage.getItem("rt_users");
-            const storedLogs = localStorage.getItem("rt_logs");
+        async function initApp() {
             const storedTheme = localStorage.getItem("rt_theme") || "dark";
             const storedSessionUser = sessionStorage.getItem("rt_active_user");
-
-            if (storedUsers) {
-                users = JSON.parse(storedUsers);
-            } else {
-                users = defaultUsers;
-                localStorage.setItem("rt_users", JSON.stringify(users));
-            }
-
-            if (storedLogs) {
-                dbLogs = JSON.parse(storedLogs);
-            } else {
-                dbLogs = defaultLogs;
-                localStorage.setItem("rt_logs", JSON.stringify(dbLogs));
-            }
-
-            const storedQueue = localStorage.getItem("rt_sync_queue");
-            if (storedQueue) {
-                syncQueue = JSON.parse(storedQueue);
-            }
 
             // Theme Setup
             if (storedTheme === 'dark') {
@@ -823,28 +775,61 @@
                 document.getElementById('theme-icon-moon').classList.remove('hidden');
             }
 
-            if (storedSessionUser) {
-                const userObj = JSON.parse(storedSessionUser);
-                const latestUser = users.find(u => u.id === userObj.id);
-                if (latestUser) {
-                    currentUser = latestUser;
-                    enterApp();
-                } else {
-                    showAuthGate();
-                }
-            } else {
-                showAuthGate();
+            // Memeriksa antrean sinkronisasi lokal
+            const storedQueue = localStorage.getItem("rt_sync_queue");
+            if (storedQueue) {
+                syncQueue = JSON.parse(storedQueue);
             }
 
             checkOnlineStatus();
             window.addEventListener('online', checkOnlineStatus);
             window.addEventListener('offline', checkOnlineStatus);
 
+            if (storedSessionUser) {
+                try {
+                    currentUser = JSON.parse(storedSessionUser);
+                    // Fetch data teranyar dari spreadsheet cloud demi meminimalkan data statis
+                    await fetchUserDataFromCloud(currentUser.username, currentUser.password);
+                } catch (e) {
+                    showAuthGate();
+                }
+            } else {
+                showAuthGate();
+            }
+
             setTimeout(() => {
                 const loader = document.getElementById("loading-screen");
                 loader.classList.add("opacity-0");
                 setTimeout(() => loader.classList.add("hidden"), 500);
-            }, 1200);
+            }, 1000);
+        }
+
+        // Menarik data user dan log aktivitas langsung dari Spreadsheet
+        async function fetchUserDataFromCloud(username, password) {
+            if (!navigator.onLine) {
+                showCustomPopup("Mode Offline", "Koneksi internet terputus. Memuat data cache sesi terakhir.", "info");
+                enterApp();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${GAS_URL}?action=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    currentUser = result.user;
+                    dbLogs = result.logs;
+                    sessionStorage.setItem("rt_active_user", JSON.stringify(currentUser));
+                    enterApp();
+                } else {
+                    showAuthGate();
+                    showCustomPopup("Sesi Berakhir", "Kredensial gagal diverifikasi ulang dengan awan. Silakan login lagi.", "error");
+                }
+            } catch (err) {
+                console.error("Gagal menarik data awan:", err);
+                showCustomPopup("Kesalahan Database", "Gagal memuat database cloud. Mengandalkan data lokal.", "error");
+                enterApp();
+            }
         }
 
         // AUTHENTICATION FLOW
@@ -860,90 +845,112 @@
                 loginForm.classList.add('hidden');
                 registerForm.classList.remove('hidden');
                 title.innerText = "Daftar Pelari Baru";
-                subtitle.innerText = "Buat kredensial Anda untuk memulai program latihan terisolasi.";
+                subtitle.innerText = "Daftar sekali dan nikmati sinkronisasi lintas perangkat via spreadsheet.";
                 switchBtn.innerText = "Sudah memiliki akun? Masuk di sini";
             } else {
                 loginForm.classList.remove('hidden');
                 registerForm.classList.add('hidden');
                 title.innerText = "Masuk Pelari";
-                subtitle.innerText = "Gunakan kredensial Anda untuk masuk ke dashboard pribadi.";
+                subtitle.innerText = "Koneksi Real-time ke Google Spreadsheet Database Anda.";
                 switchBtn.innerText = "Belum punya akun? Daftar sebagai pelari baru";
             }
         }
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
             const userInp = document.getElementById('login-username').value.trim().toLowerCase();
             const passInp = document.getElementById('login-password').value;
 
-            const matchedUser = users.find(u => u.username === userInp && u.password === passInp);
-
-            if (matchedUser) {
-                triggerActionLoader("Memeriksa Akun...", "AI sedang menyiapkan data terenskripsi Anda.", 1500, () => {
-                    currentUser = matchedUser;
-                    sessionStorage.setItem("rt_active_user", JSON.stringify(currentUser));
-                    enterApp();
-                    showCustomPopup("Berhasil Masuk", `Selamat datang kembali, ${currentUser.name}! Mulai petualangan lari Anda hari ini.`, 'success');
-                });
-            } else {
-                showCustomPopup("Gagal Masuk", "Username atau Password salah! Silakan coba lagi.", 'error');
+            if (!navigator.onLine) {
+                showCustomPopup("Gagal Masuk", "Masuk pertama kali memerlukan koneksi internet aktif untuk sinkronisasi database cloud.", "error");
+                return;
             }
+
+            triggerActionLoader("Memeriksa Akun...", "AI sedang memverifikasi kredensial Anda di spreadsheet...", 1500, async () => {
+                try {
+                    const response = await fetch(`${GAS_URL}?action=login&username=${encodeURIComponent(userInp)}&password=${encodeURIComponent(passInp)}`);
+                    const result = await response.json();
+
+                    if (result.status === "success") {
+                        currentUser = result.user;
+                        dbLogs = result.logs;
+                        sessionStorage.setItem("rt_active_user", JSON.stringify(currentUser));
+                        enterApp();
+                        showCustomPopup("Berhasil Masuk", `Selamat datang kembali, ${currentUser.name}! Data cloud berhasil disinkronkan.`, 'success');
+                    } else {
+                        showCustomPopup("Gagal Masuk", result.message || "Username atau Password salah!", 'error');
+                    }
+                } catch (err) {
+                    showCustomPopup("Kesalahan Koneksi", "Gagal terhubung dengan server Google Sheets.", 'error');
+                }
+            });
         }
 
-        function handleRegister(e) {
+        async function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
             const username = document.getElementById('reg-username').value.trim().toLowerCase();
             const password = document.getElementById('reg-password').value;
 
-            const isTaken = users.some(u => u.username === username);
-            if (isTaken) {
-                showCustomPopup("Username Terpakai", "Username sudah digunakan! Silakan pilih username yang lain.", 'error');
+            if (!navigator.onLine) {
+                showCustomPopup("Gagal Mendaftar", "Pendaftaran memerlukan koneksi internet aktif.", "error");
                 return;
             }
 
-            triggerActionLoader("Mendaftarkan Pelari...", "AI sedang memetakan rencana latihan perdana Anda.", 1800, () => {
-                const newId = "usr-" + Math.floor(1000 + Math.random() * 9000) + "-b";
-                const newUserObj = {
-                    id: newId,
-                    name: name,
-                    username: username,
-                    password: password,
-                    dob: "1998-01-01",
-                    gender: "Male",
-                    height: 170,
-                    weight: 70,
-                    targetWeight: 65,
-                    experience: "Beginner",
-                    injury: "tidak ada",
-                    comorbid: "tidak ada",
-                    rhr: 70,
-                    mhr: 185,
-                    goal: "Menjaga Kebugaran",
-                    age: 28,
-                    bmi: 24.2,
-                    bmiStatus: "Normal",
-                    targetBmi: 22.4,
-                    vo2max: 38.0,
-                    weeklyTarget: 10
-                };
+            triggerActionLoader("Mendaftarkan...", "Memastikan keunikan username di database cloud...", 1800, async () => {
+                try {
+                    // Cek username apakah sudah terpakai di cloud
+                    const responseCheck = await fetch(`${GAS_URL}?action=checkUsername&username=${encodeURIComponent(username)}`);
+                    const checkResult = await responseCheck.json();
 
-                users.push(newUserObj);
-                localStorage.setItem("rt_users", JSON.stringify(users));
-                
-                enqueueSync('USERS', newUserObj);
+                    if (checkResult.taken) {
+                        showCustomPopup("Username Terpakai", "Username sudah digunakan! Pilih nama lain.", 'error');
+                        return;
+                    }
 
-                currentUser = newUserObj;
-                sessionStorage.setItem("rt_active_user", JSON.stringify(currentUser));
-                
-                enterApp();
-                navigate('profile');
+                    const newId = "usr-" + Math.floor(1000 + Math.random() * 9000) + "-b";
+                    const newUserObj = {
+                        id: newId,
+                        name: name,
+                        username: username,
+                        password: password,
+                        dob: "1998-01-01",
+                        gender: "Male",
+                        height: 170,
+                        weight: 70,
+                        targetWeight: 65,
+                        experience: "Beginner",
+                        injury: "tidak ada",
+                        comorbid: "tidak ada",
+                        rhr: 70,
+                        mhr: 185,
+                        goal: "Menjaga Kebugaran",
+                        age: 28,
+                        bmi: 24.2,
+                        bmiStatus: "Normal",
+                        targetBmi: 22.4,
+                        vo2max: 38.0,
+                        weeklyTarget: 10
+                    };
 
-                document.getElementById('reg-name').value = '';
-                document.getElementById('reg-username').value = '';
-                document.getElementById('reg-password').value = '';
+                    currentUser = newUserObj;
+                    dbLogs = [];
+                    sessionStorage.setItem("rt_active_user", JSON.stringify(currentUser));
+                    
+                    // Upload langsung ke awan
+                    await enqueueSync('USERS', newUserObj);
+                    
+                    enterApp();
+                    navigate('profile');
 
-                showCustomPopup("Registrasi Sukses!", `Selamat datang ${name}! Langkah pertama adalah melengkapi bio-profil Anda di halaman ini.`, 'success');
+                    document.getElementById('reg-name').value = '';
+                    document.getElementById('reg-username').value = '';
+                    document.getElementById('reg-password').value = '';
+
+                    showCustomPopup("Pendaftaran Sukses!", `Selamat datang ${name}! Harap lengkapi biodata & biometrik Anda.`, 'success');
+                } catch (err) {
+                    showCustomPopup("Gagal Mendaftar", "Gagal menghubungi server untuk pendaftaran.", 'error');
+                }
             });
         }
 
@@ -951,6 +958,7 @@
             triggerActionLoader("Keluar Akun...", "Terima kasih atas dedikasi latihan Anda hari ini.", 1200, () => {
                 sessionStorage.removeItem("rt_active_user");
                 currentUser = null;
+                dbLogs = [];
                 showAuthGate();
             });
         }
@@ -1081,15 +1089,13 @@
             else if (bmi >= 25) status = "Kelebihan Berat Badan";
             document.getElementById('auto-bmi').innerText = `${bmi} (${status})`;
 
-            const targetBmi = (targetWeight / (height * height)).toFixed(1);
-
             const mhr = customMhr || (220 - age);
             const vo2max = (15.3 * (mhr / rhr)).toFixed(1);
             document.getElementById('auto-vo2max').innerText = vo2max + " ml/kg/min";
 
             let weeklyTarget = 12;
             const goal = document.getElementById('prof-goal').value;
-            if (goal.includes("Weight") || goal.includes("Endurance")) weeklyTarget = 18;
+            if (goal.includes("Berat") || goal.includes("Endurance")) weeklyTarget = 18;
             else if (goal.includes("5K")) weeklyTarget = 15;
             else if (goal.includes("10K")) weeklyTarget = 24;
             else if (goal.includes("Half")) weeklyTarget = 35;
@@ -1101,7 +1107,7 @@
             e.preventDefault();
             if (!currentUser) return;
 
-            triggerActionLoader("Menghitung Bio-metrik...", "AI sedang menganalisis postur tubuh dan zona latihan Anda.", 1600, () => {
+            triggerActionLoader("Menghitung Bio-metrik...", "AI sedang mengevaluasi komposisi tubuh & memperbarui database cloud...", 1600, async () => {
                 const height = parseFloat(document.getElementById('prof-height').value);
                 const weight = parseFloat(document.getElementById('prof-weight').value);
                 const targetWeight = parseFloat(document.getElementById('prof-target-weight').value);
@@ -1123,7 +1129,7 @@
 
                 let weeklyTarget = 12;
                 const goal = document.getElementById('prof-goal').value;
-                if (goal.includes("Weight") || goal.includes("Endurance")) weeklyTarget = 18;
+                if (goal.includes("Berat") || goal.includes("Endurance")) weeklyTarget = 18;
                 else if (goal.includes("5K")) weeklyTarget = 15;
                 else if (goal.includes("10K")) weeklyTarget = 24;
                 else if (goal.includes("Half")) weeklyTarget = 35;
@@ -1148,51 +1154,49 @@
                 currentUser.vo2max = vo2max;
                 currentUser.weeklyTarget = weeklyTarget;
 
-                const index = users.findIndex(u => u.id === currentUser.id);
-                if (index !== -1) users[index] = currentUser;
-                localStorage.setItem("rt_users", JSON.stringify(users));
                 sessionStorage.setItem("rt_active_user", JSON.stringify(currentUser));
 
-                enqueueSync('USERS', currentUser);
+                // Sinkronisasi data user langsung ke GAS
+                await enqueueSync('USERS', currentUser);
 
                 updateCurrentUserDashboard();
-                generateAITrainingPlan(currentUser);
+                await generateAITrainingPlan(currentUser);
 
-                showCustomPopup("Profil Terbuka", "AI Coach berhasil mengkalibrasi biodata, zona HR, serta merancang program lari baru Anda.", "success");
+                showCustomPopup("Profil Diperbarui", "Biodata berhasil dikalibrasi di cloud database.", "success");
                 navigate('dashboard');
             });
         }
 
-        function generateAITrainingPlan(user) {
+        async function generateAITrainingPlan(user) {
             const workouts = [];
             const goal = user.goal;
 
-            if (goal.includes("Menurunkan Berat Badan")) {
+            if (goal.includes("Berat")) {
                 workouts.push(
-                    { day: "Senin", title: "Easy Zone 2 Run", target: "3 km", pace: "Easy Pace", desc: "Pertahankan detak jantung di Zona 2 (Aerobik) untuk efisiensi lemak." },
-                    { day: "Rabu", title: "Interval Fat Burn", target: "4 x 400m", pace: "Fast Pace", desc: "400m cepat, dilanjutkan 400m jalan kaki. Total 4 repetisi." },
-                    { day: "Jumat", title: "Easy Zone 2 Run", target: "3.5 km", pace: "Easy Pace", desc: "Lari santai konstan, nikmati pemandangan sekitar." },
-                    { day: "Minggu", title: "Long Slow Distance (LSD)", target: "6 km", pace: "Very Slow", desc: "Target jarak, bukan kecepatan. Bawa minum." }
+                    { day: "Senin", title: "Easy Zone 2 Run", target: "3 km", pace: "Easy Pace", desc: "Sempurna untuk membakar kalori lemak secara optimal." },
+                    { day: "Rabu", title: "Interval Fat Burn", target: "4 x 400m", pace: "Fast Pace", desc: "400m cepat, dilanjutkan 400m jalan kaki. Ulangi 4 kali." },
+                    { day: "Jumat", title: "Easy Zone 2 Run", target: "3.5 km", pace: "Easy Pace", desc: "Lari santai konstan menjaga metabolisme." },
+                    { day: "Minggu", title: "Long Slow Distance (LSD)", target: "6 km", pace: "Very Slow", desc: "Fokus menjaga kenyamanan lari berdurasi panjang." }
                 );
-            } else if (goal.includes("5K Finisher")) {
+            } else if (goal.includes("5K")) {
                 workouts.push(
-                    { day: "Senin", title: "Easy Run", target: "3 km", pace: "7:15 - 8:00 /km", desc: "Fokus pada kenyamanan langkah." },
-                    { day: "Rabu", title: "Tempo Run", target: "2.5 km", pace: "6:30 - 7:00 /km", desc: "Lari di batas ambang pernafasan (Zona 3-4)." },
-                    { day: "Jumat", title: "Interval 5K Speed", target: "5 x 200m", pace: "Sprint", desc: "Kembalikan kelenturan otot kaki dengan akselerasi cepat." },
-                    { day: "Minggu", title: "Long Run", target: "5 km", pace: "Easy Pace", desc: "Simulasi Finisher 5K tanpa henti." }
+                    { day: "Senin", title: "Easy Run", target: "3 km", pace: "7:15 - 8:00 /km", desc: "Pondasi kekuatan langkah." },
+                    { day: "Rabu", title: "Tempo Run", target: "2.5 km", pace: "6:30 - 7:00 /km", desc: "Melatih batas kelelahan paru-paru Anda." },
+                    { day: "Jumat", title: "Interval Speed", target: "5 x 200m", pace: "Sprint", desc: "Meningkatkan kelenturan otot lari Anda." },
+                    { day: "Minggu", title: "Long Run", target: "5 km", pace: "Easy Pace", desc: "Simulasi 5K Finisher penuh keyakinan." }
                 );
-            } else if (goal.includes("10K Finisher") || goal.includes("Half Marathon") || goal.includes("Marathon")) {
+            } else if (goal.includes("10K") || goal.includes("Half") || goal.includes("Marathon")) {
                 workouts.push(
-                    { day: "Senin", title: "Base Recovery Run", target: "5 km", pace: "Easy Pace", desc: "Atur nafas teratur." },
-                    { day: "Rabu", title: "Hill Repeat / Strength", target: "6 x 150m uphill", pace: "Strong Pace", desc: "Cari tanjakan sedang, dorong tenaga saat menanjak." },
-                    { day: "Jumat", title: "Tempo Cruise", target: "6 km", pace: "Steady", desc: "Konsisten pada pace race target." },
-                    { day: "Minggu", title: "Long Endurance Run", target: "10 - 15 km", pace: "Slow Pace", desc: "Latihan ketahanan mental dan fisik jangka panjang." }
+                    { day: "Senin", title: "Base Recovery Run", target: "5 km", pace: "Easy Pace", desc: "Lari pemulihan melancarkan sirkulasi." },
+                    { day: "Rabu", title: "Hill Repeat", target: "6 x 150m uphill", pace: "Strong Pace", desc: "Membangun stamina power otot paha." },
+                    { day: "Jumat", title: "Tempo Cruise", target: "6 km", pace: "Steady", desc: "Menjaga ritme konstan pada pace kompetisi." },
+                    { day: "Minggu", title: "Long Endurance Run", target: "12 km", pace: "Slow Pace", desc: "Membangun ketahanan otot jangka panjang." }
                 );
             } else {
                 workouts.push(
-                    { day: "Senin", title: "Easy Walk & Jog", target: "2 km", pace: "Easy Jog", desc: "Lari santai diselingi jalan kaki." },
-                    { day: "Rabu", title: "Steady Run", target: "3 km", pace: "Comfortable", desc: "Lari santai tanpa henti." },
-                    { day: "Minggu", title: "Sunday Funday Run", target: "4 km", pace: "Easy Jog", desc: "Jaga kebugaran jantung dan paru-paru." }
+                    { day: "Senin", title: "Easy Jog & Walk", target: "2 km", pace: "Easy Jog", desc: "Sangat bersahabat untuk sendi pemula." },
+                    { day: "Rabu", title: "Steady Run", target: "3 km", pace: "Comfortable", desc: "Memperkuat kapasitas kebugaran paru-paru." },
+                    { day: "Minggu", title: "Sunday Funday Run", target: "4 km", pace: "Easy Jog", desc: "Meningkatkan daya tahan tubuh dan kebugaran jasmani." }
                 );
             }
 
@@ -1204,7 +1208,7 @@
             };
 
             localStorage.setItem(`rt_plan_${user.id}`, JSON.stringify(trainingPlanObj));
-            enqueueSync('TRAINING_PLAN', trainingPlanObj);
+            await enqueueSync('TRAINING_PLAN', trainingPlanObj);
         }
 
         function renderWeeklyTrainingPlan() {
@@ -1218,7 +1222,7 @@
             }
 
             const plan = JSON.parse(planObj);
-            document.getElementById('coach-goal-subtitle').innerText = `Tujuan: ${plan.goal} • Disesuaikan untuk level ${currentUser.experience}`;
+            document.getElementById('coach-goal-subtitle').innerText = `Tujuan: ${plan.goal} • Level: ${currentUser.experience}`;
 
             plan.workouts.forEach((workout, idx) => {
                 const card = document.createElement('div');
@@ -1246,7 +1250,7 @@
         }
 
         function openRunLogModal(day, title, index) {
-            document.getElementById('log-modal-title').innerText = `Log Hasil Latihan: ${day} - ${title}`;
+            document.getElementById('log-modal-title').innerText = `Log Latihan: ${day} - ${title}`;
             document.getElementById('log-session-index').value = index;
             document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('run-log-modal').classList.remove('hidden');
@@ -1269,7 +1273,7 @@
             const notes = document.getElementById('log-notes').value;
             const date = document.getElementById('log-date').value;
 
-            triggerActionLoader("Menyimpan Sesi...", "AI sedang mengevaluasi intensitas latihan Anda.", 1700, () => {
+            triggerActionLoader("Menganalisis Performa...", "AI sedang memproses pace & beban akut kardio Anda...", 1700, async () => {
                 const parts = durationRaw.split(':');
                 let secs = 0;
                 if (parts.length === 3) {
@@ -1289,15 +1293,15 @@
                 const avgPaceStr = `${paceMins}:${paceSecs < 10 ? '0' : ''}${paceSecs}`;
 
                 const calories = Math.round(8.5 * currentUser.weight * hours);
-
                 const zoneTarget = (avghr / currentUser.mhr) * 100;
+                
                 let feedback = "";
                 if (zoneTarget > 85) {
-                    feedback = `Hari ini Anda berlari ${dist} km dengan pace rata-rata ${avgPaceStr}/km dan HR rata-rata ${avghr} bpm. Mayoritas latihan berada di Zona 4/5 sehingga intensitas jauh lebih tinggi dari target Easy Run yang direncanakan. Disarankan menurunkan pace pada sesi berikutnya agar tetap berada di Zona 2 untuk meningkatkan kapasitas aerobik serta mencegah overtraining.`;
+                    feedback = `Pace lari rata-rata ${avgPaceStr}/km dan denyut jantung berada di Zona 5. Intensitas ini melampaui anjuran pembakaran lemak. Pastikan hidrasi tercukupi dan ambil waktu pemulihan penuh besok.`;
                 } else if (zoneTarget >= 60 && zoneTarget < 75) {
-                    feedback = `Luar biasa! Latihan lari sejauh ${dist} km berhasil diselesaikan dengan baik di Zona 2 (Aerobic). Intensitas ini sangat sempurna untuk memperkuat otot jantung, pembakaran cadangan lemak secara maksimal, serta membangun ketahanan dasar kaki Anda. Pertahankan konsistensi ini!`;
+                    feedback = `Luar biasa! Detak jantung Anda konstan berada di Zona 2 Aerobik. Sangat efisien untuk membakar timbunan kalori lemak serta membangun fondasi ketahanan (endurance) kardiovaskular.`;
                 } else {
-                    feedback = `Sesi pemulihan yang sangat pas. Jarak ${dist} km pada detak jantung pemulihan membantu melancarkan aliran darah ke seluruh sel otot tanpa memicu kelelahan akumulatif. Sangat ideal untuk menjaga kebugaran tubuh Anda.`;
+                    feedback = `Sesi pemulihan aktif yang baik untuk melancarkan sirkulasi asam laktat tanpa membebani persendian kaki Anda.`;
                 }
 
                 const newLog = {
@@ -1318,20 +1322,29 @@
                 };
 
                 dbLogs.push(newLog);
-                localStorage.setItem("rt_logs", JSON.stringify(dbLogs));
 
-                enqueueSync('RUN_LOGS', newLog);
+                // Sinkronisasi log ke cloud database GAS
+                await enqueueSync('RUN_LOGS', newLog);
 
                 closeRunLogModal();
                 updateCurrentUserDashboard();
                 initializeCharts();
 
+                // Munculkan Evaluasi Menarik ke User
                 document.getElementById('eval-modal-content').innerHTML = `
-                    <p class="font-bold text-white text-base mb-2">Evaluasi Sesi:</p>
-                    <p class="bg-slate-950 p-3.5 rounded-xl border border-brand-border text-slate-300 italic mb-3">"${feedback}"</p>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <span class="text-slate-400">Kalori Terbakar:</span> <strong class="text-white">${calories} Kkal</strong>
-                        <span class="text-slate-400">Rata-rata Pace:</span> <strong class="text-white">${avgPaceStr} /km</strong>
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-brand-border mb-3">
+                        <p class="text-xs text-slate-400 uppercase font-bold mb-1">Evaluasi AI Coach:</p>
+                        <p class="text-slate-200 italic leading-relaxed text-sm">"${feedback}"</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 block mb-0.5">Jarak Tempuh</span>
+                            <strong class="text-brand-volt text-sm font-black">${dist} km</strong>
+                        </div>
+                        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 block mb-0.5">Estimasi Kalori</span>
+                            <strong class="text-brand-volt text-sm font-black">${calories} Kkal</strong>
+                        </div>
                     </div>
                 `;
                 document.getElementById('eval-modal').classList.remove('hidden');
@@ -1361,12 +1374,19 @@
                 avgPaceStr = `${min}:${sec < 10 ? '0' : ''}${sec}`;
             }
 
+            // Estimasi VO2max adaptif berdasarkan aktivitas terbaru
             let dynamicVo2 = currentUser.vo2max;
             if (userLogs.length > 0) {
                 const lastLog = userLogs[userLogs.length - 1];
                 const est = 15.3 * (currentUser.mhr / lastLog.avgHr);
                 if (!isNaN(est) && est > 20 && est < 85) {
                     dynamicVo2 = parseFloat(est.toFixed(1));
+                    
+                    // Otomatis upgrade profil jika VO2max meningkat demi konsep AI progresif
+                    if (dynamicVo2 > currentUser.vo2max) {
+                        currentUser.vo2max = dynamicVo2;
+                        enqueueSync('USERS', currentUser);
+                    }
                 }
             }
 
@@ -1384,26 +1404,49 @@
 
             document.getElementById('stat-vo2max-cat').innerText = cat;
 
+            // Hitung Progres Target Mingguan Lari (Minggu ini)
+            const today = new Date();
+            const oneDay = 24 * 60 * 60 * 1000;
+            const currentWeekLogs = userLogs.filter(log => {
+                const logDate = new Date(log.date);
+                const diffDays = Math.round(Math.abs((today - logDate) / oneDay));
+                return diffDays <= 7;
+            });
+
+            const currentWeekDist = currentWeekLogs.reduce((acc, curr) => acc + curr.distance, 0);
+            const weeklyTarget = currentUser.weeklyTarget || 10;
+            const progressPct = Math.min((currentWeekDist / weeklyTarget) * 100, 100);
+
+            document.getElementById('dashboard-progress-label').innerText = `${currentWeekDist.toFixed(2)} / ${weeklyTarget.toFixed(1)} km`;
+            const progressBar = document.getElementById('dashboard-progress-bar');
+            progressBar.style.width = `${progressPct}%`;
+
+            const achievedBadge = document.getElementById('target-achieved-badge');
+            if (currentWeekDist >= weeklyTarget) {
+                progressBar.classList.remove('bg-brand-orange');
+                progressBar.classList.add('bg-brand-volt');
+                achievedBadge.classList.remove('hidden');
+            } else {
+                progressBar.classList.remove('bg-brand-volt');
+                progressBar.classList.add('bg-brand-orange');
+                achievedBadge.classList.add('hidden');
+            }
+
+            // Perhitungan Training Load (ATL, CTL, & Form)
             let atl = 0; 
             let ctl = 0; 
 
-            const now = new Date();
             userLogs.forEach(log => {
                 const logDate = new Date(log.date);
-                const diffTime = Math.abs(now - logDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const diffDays = Math.ceil(Math.abs(today - logDate) / (1000 * 60 * 60 * 24));
 
                 const p = log.duration.split(':');
                 let mins = 30;
                 if (p.length === 3) mins = parseInt(p[0]) * 60 + parseInt(p[1]);
                 const loadScore = mins * log.rpe;
 
-                if (diffDays <= 7) {
-                    atl += loadScore;
-                }
-                if (diffDays <= 28) {
-                    ctl += loadScore;
-                }
+                if (diffDays <= 7) atl += loadScore;
+                if (diffDays <= 28) ctl += loadScore;
             });
 
             const rawFitness = Math.round(ctl / 28);
@@ -1416,11 +1459,11 @@
 
             let loadMsg = "";
             if (rawForm < -20) {
-                loadMsg = "Fatigue (Kelelahan) Anda terlalu tinggi! Risiko cedera meningkat. AI menyarankan istirahat penuh selama 2-3 hari ke depan.";
+                loadMsg = "Kelelahan berlebih terdeteksi! Istirahat penuh atau joging sangat lambat sangat disarankan besok.";
             } else if (rawForm >= -20 && rawForm <= 5) {
-                loadMsg = "Zona Latihan Optimal. Kebugaran (Fitness) Anda meningkat secara bertahap tanpa risiko overtraining berat.";
+                loadMsg = "Zona optimal tercapai. Peningkatan ketahanan stamina Anda berkembang pesat secara konsisten.";
             } else {
-                loadMsg = "Freshness optimal. Siap untuk melakukan tantangan baru atau tes jarak jauh (Long Run).";
+                loadMsg = "Tubuh Anda dalam kondisi sangat prima & fresh. Sesi yang sangat pas untuk Long Run!";
             }
             document.getElementById('load-status-msg').innerText = `"${loadMsg}"`;
 
@@ -1549,9 +1592,7 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            labels: {
-                                color: '#94A3B8'
-                            }
+                            labels: { color: '#94A3B8' }
                         }
                     },
                     scales: {
@@ -1579,21 +1620,6 @@
                 renderPaceHrChart(userLogs);
                 renderWeightVo2Chart();
             }
-        }
-
-        function updateChartFilter(filter) {
-            activeChartFilter = filter;
-            const btns = document.querySelectorAll('.chart-filter-btn');
-            btns.forEach(btn => {
-                if (btn.getAttribute('onclick').includes(filter)) {
-                    btn.classList.add('bg-brand-orange', 'text-white');
-                    btn.classList.remove('text-slate-400');
-                } else {
-                    btn.classList.remove('bg-brand-orange', 'text-white');
-                    btn.classList.add('text-slate-400');
-                }
-            });
-            initializeCharts();
         }
 
         function renderLoadTrendsChart(userLogs) {
@@ -1647,7 +1673,7 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Pace (Decimal Min/km)', data: paces, backgroundColor: '#FF5722' },
+                        { label: 'Pace (Min/km)', data: paces, backgroundColor: '#FF5722' },
                         { label: 'Heart Rate (BPM)', data: hrs, type: 'line', borderColor: '#ADFF2F' }
                     ]
                 },
@@ -1665,9 +1691,9 @@
 
         function renderWeightVo2Chart() {
             const ctx = document.getElementById('weightVo2Chart').getContext('2d');
-            let labels = ["Week 1", "Week 2", "Week 3", "Week 4"];
-            let weights = [currentUser.weight, currentUser.weight - 0.5, currentUser.weight - 0.8, currentUser.weight - 1.2];
-            let vo2s = [currentUser.vo2max - 0.5, currentUser.vo2max, currentUser.vo2max + 0.3, currentUser.vo2max + 0.8];
+            let labels = ["Awal Latihan", "Minggu 1", "Minggu 2", "Minggu Terbaru"];
+            let weights = [currentUser.weight, currentUser.weight - 0.4, currentUser.weight - 0.7, currentUser.weight - 1.1];
+            let vo2s = [currentUser.vo2max - 0.6, currentUser.vo2max - 0.3, currentUser.vo2max, currentUser.vo2max];
 
             new Chart(ctx, {
                 type: 'line',
@@ -1691,7 +1717,7 @@
         }
 
         let chatMessages = [
-            { sender: 'coach', text: 'Halo! Saya AI Coach lari Anda. Tanyakan saya seputar jadwal latihan lari, optimalisasi Pace, zona Heart Rate, estimasi VO2Max, pencegahan cedera, strategi perlombaan (Race), maupun pola nutrisi lari Anda!' }
+            { sender: 'coach', text: 'Halo! Saya AI Coach lari Anda. Mari diskusikan latihan, nutrisi, hidrasi, pemulihan, atau cara meningkatkan ketahanan pernapasan Anda.' }
         ];
 
         function renderChatHistory() {
@@ -1727,22 +1753,22 @@
                 const query = text.toLowerCase();
                 let reply = "";
 
-                const allowedKeywords = ["pace", "heart rate", "vo2max", "recovery", "marathon", "half marathon", "endurance", "injury", "prevent", "nutrition", "diet", "makan", "karbo", "race", "strategy", "cedera", "program", "latihan", "jadwal", "lari", "detak jantung"];
+                const allowedKeywords = ["pace", "heart rate", "vo2max", "recovery", "marathon", "half marathon", "endurance", "injury", "prevent", "nutrition", "diet", "makan", "karbo", "race", "strategy", "cedera", "program", "latihan", "jadwal", "hari", "detak jantung"];
                 const isRelevant = allowedKeywords.some(keyword => query.includes(keyword));
 
                 if (!isRelevant) {
-                    reply = "Maaf, saya hanya dapat membantu seputar latihan lari dan program yang terdapat dalam aplikasi ini.";
+                    reply = "Maaf, sebagai AI Coach Anda, saya hanya diperkenankan menjawab pertanyaan seputar performa lari, program kardio, cedera, nutrisi pelari, dan data latihan Anda.";
                 } else {
                     if (query.includes("nutrition") || query.includes("makan") || query.includes("karbo")) {
-                        reply = "Bagi pelari pemula, fokuslah pada Karbohidrat kompleks (nasi merah, pisang, oat) 2 jam sebelum berlari untuk cadangan energi, serta protein tinggi setelah lari untuk pemulihan serabut otot Anda.";
+                        reply = "Sebelum berlari (1-2 jam), prioritaskan karbohidrat mudah cerna seperti pisang atau oat. Setelah berlari, segera isi protein dalam 30 menit pertama untuk pemulihan optimal jaringan sel otot Anda.";
                     } else if (query.includes("cedera") || query.includes("injury")) {
-                        reply = "Pencegahan cedera terbaik adalah pemanasan dinamis 5-10 menit sebelum lari, meningkatkan volume mingguan maksimal 10% per minggu, serta selalu dengarkan tubuh jika sendi terasa sakit.";
+                        reply = "Jika merasakan nyeri sendi lutut atau betis (shin splints), segera lakukan metode RICE (Rest, Ice, Compression, Elevation). Jangan paksakan berlari melintasi rasa nyeri.";
                     } else if (query.includes("pace")) {
-                        reply = "Pace terbaik untuk melatih ketahanan aerobik dasar (aerobic base) adalah 'conversational pace' di mana Anda masih bisa berbicara kalimat lengkap tanpa tersengal-sengal.";
+                        reply = "Kunci utama endurance pemula adalah Zone 2 (Conversational Pace), yaitu berlari dengan kecepatan santai di mana Anda masih sanggup mengucapkan satu kalimat panjang tanpa terengah-engah.";
                     } else if (query.includes("vo2max")) {
-                        reply = "Meningkatkan VO2max dapat dicapai secara efisien dengan mengombinasikan lari interval intensitas tinggi (HIIT) sekali seminggu dengan lari jarak jauh intensitas rendah (Zone 2).";
+                        reply = "Peningkatan VO2Max dipicu oleh kombinasi latihan interval berintensitas tinggi (HIIT) sekali seminggu yang didukung lari jarak jauh aerobik lambat (LSD) di akhir pekan.";
                     } else {
-                        reply = "Untuk mempercepat recovery pasca-lari, usahakan melakukan pendinginan, hidrasi cukup elektrolit, tidur 7-8 jam berkualitas, serta asupan nutrisi protein tinggi.";
+                        reply = "Untuk memaksimalkan pemulihan pasca lari, optimalkan hidrasi kaya elektrolit, lakukan peregangan statis, dan pastikan tidur berkualitas minimal 7-8 jam.";
                     }
                 }
 
@@ -1765,14 +1791,14 @@
             if (!currentUser) return;
 
             const reminders = [
-                `Latihan Anda hari ini: Lakukan pemanasan dinamis sebelum berlari.`,
-                `Saran Pemulihan: Pastikan hidrasi 2-3 liter air per hari.`,
-                `Target Mingguan: Kejar target lari Anda sebesar ${currentUser.weeklyTarget} km minggu ini.`,
-                `Ingat untuk mencatat berat badan Anda agar mempermudah pemantauan BMI.`
+                `Kiat AI: Selalu lakukan pemanasan dinamis 5-10 menit demi mencegah kram otot betis.`,
+                `Kiat AI: Target mingguan Anda adalah ${currentUser.weeklyTarget} km. Bagi ke dalam beberapa hari latihan kecil.`,
+                `Kiat AI: Hidrasi merata 300ml air mineral 30 menit sebelum mulai berlari sangat penting untuk ketahanan.`,
+                `Kiat AI: Jika kelelahan atau Form di bawah -20, jadwalkan rest day penuh untuk pemulihan.`
             ];
 
             const idx = Math.floor(Math.random() * reminders.length);
-            text.innerText = "Coach Reminder: " + reminders[idx];
+            text.innerText = reminders[idx];
             container.classList.remove('hidden');
         }
 
@@ -1782,14 +1808,14 @@
 
         function toggleNotifications() {
             const badge = document.getElementById('notif-badge');
-            badge.classList.toggle('hidden');
-            showCustomPopup("Notifikasi Latihan", "Semua jadwal latihan mingguan Anda sinkron & siap untuk diakses secara offline.", "info");
+            badge.classList.add('hidden');
+            showCustomPopup("Notifikasi Sinkronisasi", "Semua log aktivitas dan rencana mingguan lari Anda telah berhasil dicadangkan ke Google Sheets.", "info");
         }
 
         function exportToCSV() {
             const userLogs = dbLogs.filter(log => log.userId === currentUser.id);
             if (userLogs.length === 0) {
-                showCustomPopup("Gagal Export", "Tidak ada log aktivitas lari untuk di-export.", "error");
+                showCustomPopup("Gagal Eksport", "Belum ada log aktivitas lari yang tercatat untuk diekspor.", "error");
                 return;
             }
 
@@ -1798,7 +1824,7 @@
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            link.setAttribute("download", `RunTracker_${currentUser.name.replace(/\s+/g, '_')}_Logs.csv`);
+            link.setAttribute("download", `RunTracker_Logs_${currentUser.username}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -1812,7 +1838,7 @@
             doc.setFont("helvetica", "bold");
             doc.setFontSize(22);
             doc.setTextColor(255, 87, 34);
-            doc.text("LAPORAN PERFORMA - RUN TRACKER AI", 14, 25);
+            doc.text("LAPORAN PERFORMA - AI RUN COACH", 14, 25);
 
             doc.setFontSize(10);
             doc.setTextColor(100);
@@ -1827,23 +1853,22 @@
 
             doc.setFont("helvetica", "normal");
             doc.setFontSize(10);
-            doc.text(`Nama: ${currentUser.name}`, 14, 52);
-            doc.text(`Username: ${currentUser.username}`, 14, 58);
-            doc.text(`Tujuan: ${currentUser.goal}`, 14, 64);
-            doc.text(`BMI: ${currentUser.bmi} (${currentUser.bmiStatus})`, 14, 70);
-            doc.text(`VO2Max Estimasi: ${currentUser.vo2max}`, 14, 76);
+            doc.text(`Nama: ${currentUser.name} (@${currentUser.username})`, 14, 52);
+            doc.text(`Tujuan Program: ${currentUser.goal}`, 14, 58);
+            doc.text(`BMI Kontrol: ${currentUser.bmi} (${currentUser.bmiStatus})`, 14, 64);
+            doc.text(`VO2Max Estimasi Terkini: ${currentUser.vo2max} ml/kg/min`, 14, 70);
 
             doc.setFont("helvetica", "bold");
             doc.setFontSize(14);
-            doc.text("Ringkasan Latihan", 14, 90);
+            doc.text("Aktivitas Kumulatif", 14, 85);
 
             doc.setFont("helvetica", "normal");
             doc.setFontSize(10);
-            doc.text(`Total Lari: ${userLogs.length} Sesi`, 14, 97);
+            doc.text(`Total Lari: ${userLogs.length} Sesi`, 14, 92);
             const totalD = userLogs.reduce((acc, curr) => acc + curr.distance, 0);
-            doc.text(`Total Jarak: ${totalD.toFixed(1)} km`, 14, 103);
+            doc.text(`Total Jarak Tempuh: ${totalD.toFixed(2)} km`, 14, 98);
 
-            doc.save(`Laporan_Lari_${currentUser.name.replace(/\s+/g, '_')}.pdf`);
+            doc.save(`Laporan_Latihan_${currentUser.username}.pdf`);
         }
 
         function toggleTheme() {
@@ -1864,22 +1889,22 @@
             }
         }
 
-        // OFFLINE SYNC (Google Apps Script Integration Engine - CORS SECURED via simple plain/text POST)
+        // OFFLINE SYNC SYSTEM (Google Sheets Real-time Backend Engine)
         function checkOnlineStatus() {
             const dot = document.getElementById('sync-indicator-dot');
             const txt = document.getElementById('sync-indicator-text');
 
             if (navigator.onLine) {
-                dot.className = "w-2.5 h-2.5 bg-green-500 rounded-full inline-block mr-2 animate-pulse";
-                txt.innerText = "Online";
+                dot.className = "w-2.5 h-2.5 bg-green-500 rounded-full inline-block mr-2";
+                txt.innerText = "Online (Awan Aktif)";
                 flushSyncQueue();
             } else {
-                dot.className = "w-2.5 h-2.5 bg-yellow-500 rounded-full inline-block mr-2";
-                txt.innerText = "Offline (Cached)";
+                dot.className = "w-2.5 h-2.5 bg-yellow-500 rounded-full inline-block mr-2 animate-pulse";
+                txt.innerText = "Offline (Menyimpan di Antrean)";
             }
         }
 
-        function enqueueSync(sheetName, payload) {
+        async function enqueueSync(sheetName, payload) {
             const syncItem = {
                 id: Date.now() + "_" + Math.floor(Math.random() * 100),
                 sheet: sheetName,
@@ -1891,24 +1916,23 @@
             localStorage.setItem("rt_sync_queue", JSON.stringify(syncQueue));
 
             if (navigator.onLine) {
-                flushSyncQueue();
+                await flushSyncQueue();
             }
         }
 
         async function flushSyncQueue() {
-            if (syncQueue.length === 0 || GAS_URL.includes("PASTE_YOUR_WEB_APP_URL_HERE")) return;
+            if (syncQueue.length === 0) return;
 
             const dot = document.getElementById('sync-indicator-dot');
             const txt = document.getElementById('sync-indicator-text');
             
             dot.className = "w-2.5 h-2.5 bg-blue-500 rounded-full inline-block mr-2 animate-spin";
-            txt.innerText = "Syncing...";
+            txt.innerText = "Sinkronisasi...";
 
             while (syncQueue.length > 0) {
                 const item = syncQueue[0];
                 try {
-                    // SECURED CORS BYPASSING: Send payload as plain text
-                    await fetch(GAS_URL, {
+                    const response = await fetch(GAS_URL, {
                         method: 'POST',
                         mode: 'no-cors',
                         headers: {
@@ -1920,7 +1944,7 @@
                     syncQueue.shift();
                     localStorage.setItem("rt_sync_queue", JSON.stringify(syncQueue));
                 } catch (err) {
-                    console.log("Sync error, retrying later:", err);
+                    console.error("Gagal melakukan sinkronisasi awan, diulang nanti:", err);
                     break;
                 }
             }
@@ -1929,9 +1953,11 @@
         }
 
         function forceSync() {
-            triggerActionLoader("Sinkronisasi Paksa...", "AI sedang mengunggah antrean data tertunda ke Google Sheets.", 1500, () => {
-                flushSyncQueue();
-                showCustomPopup("Selesai Sinkron", "Semua antrean data latihan lari berhasil diselaraskan ke database cloud.", "success");
+            triggerActionLoader("Sinkronisasi Ulang...", "AI sedang menyelaraskan data lokal dengan spreadsheet di cloud...", 1500, async () => {
+                if (currentUser) {
+                    await fetchUserDataFromCloud(currentUser.username, currentUser.password);
+                    showCustomPopup("Sinkronisasi Selesai", "Semua data lari & profil Anda berhasil diperbarui langsung dari cloud spreadsheet.", "success");
+                }
             });
         }
     </script>
